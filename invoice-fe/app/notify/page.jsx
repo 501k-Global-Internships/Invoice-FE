@@ -1,0 +1,25 @@
+
+
+function Notify() {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen">
+        <div className="p-4">
+          <img
+            src="/senticon.png"
+            alt="senticon"
+            className="rounded-full bg-yellow-400 items-center p-9"
+            width={100}
+            height={80}
+          />
+        </div>
+        <p className="text-2xl font-bold mt-4">Notification successfully</p>
+        <p className="font-bold text-2xl">sent! </p>
+        <button className="mt-8 flex px-[6rem] py-2 bg-yellow-400 text-black rounded hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white">
+          Continue <img src="/arrow.png" alt="arrow" className="mt-[.6rem] ml-[.6rem] w-3" />
+        </button>
+      </div>
+    );
+  }
+  
+  export default Notify;
+  
