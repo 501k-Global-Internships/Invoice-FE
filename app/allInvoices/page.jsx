@@ -1,174 +1,134 @@
 "use client";
-import { useState } from "react";
-import React from "react";
+
 import Link from "next/link";
-const OverDue = () => {
-  const invoices = [
+import { useState } from "react";
+import Icon from "../Icon/Icon";
+const AllInvoice = () => {
+  const [invoices, setInvoices] = useState([
     {
-        client: "Lionel Ronaldo",
-        invoiceId: "#1234",
-        id: "Invoice ID: #1234",
-        status: "Paid",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "1234",
-        status: "Paid",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "#1234",
-        status: "Paid",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "#1234",
-        status: "Paid",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "#1234",
-        status: "Paid",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "#1234",
-        id: "Invoice ID: #1234",
-        status: "Unpaid",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "1234",
-        status: "Unpaid",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "#1234",
-        status: "Unpaid",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "#1234",
-        status: "Unpaid",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "#1234",
-        status: "Unpaid",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "#1234",
-        id: "Invoice ID: #1234",
-        status: "Draft",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "1234",
-        status: "Draft",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "#1234",
-        status: "Draft",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "#1234",
-        status: "Draft",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "#1234",
-        status: "Draft",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "#1234",
-        id: "Invoice ID: #1234",
-        status: "Overdue",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "1234",
-        status: "Overdue",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "#1234",
-        status: "Overdue",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "#1234",
-        status: "Overdue",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "#1234",
-        status: "Overdue",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-  ];
+      client: "Lionel Ronaldo",
+      invoiceId: "#1234",
+      id: "Invoice ID: #1234",
+      status: "Paid",
+      issuedDate: "17-Mar-2024",
+      dueDate: "17-Mar-2024",
+      amount: "₦ 200,000.00",
+    },
+    {
+      client: "Lionel Ronaldo",
+      invoiceId: "#1234",
+      status: "Paid",
+      issuedDate: "17-Mar-2024",
+      dueDate: "17-Mar-2024",
+      amount: "₦ 200,000.00",
+    },
+    {
+      client: "Lionel Ronaldo",
+      invoiceId: "#1234",
+      status: "Paid",
+      issuedDate: "17-Mar-2024",
+      dueDate: "17-Mar-2024",
+      amount: "₦ 200,000.00",
+    },
+    {
+      client: "Lionel Ronaldo",
+      invoiceId: "#1234",
+      status: "Unpaid",
+      issuedDate: "17-Mar-2024",
+      dueDate: "17-Mar-2024",
+      amount: "₦ 200,000.00",
+    },
+    {
+      client: "Lionel Ronaldo",
+      invoiceId: "#1234",
+      status: "Unpaid",
+      issuedDate: "17-Mar-2024",
+      dueDate: "17-Mar-2024",
+      amount: "₦ 200,000.00",
+    },
+    {
+      client: "Lionel Ronaldo",
+      invoiceId: "#1234",
+      status: "Unpaid",
+      issuedDate: "17-Mar-2024",
+      dueDate: "17-Mar-2024",
+      amount: "₦ 200,000.00",
+    },
+    {
+      client: "Lionel Ronaldo",
+      invoiceId: "#1234",
+      status: "Draft",
+      issuedDate: "17-Mar-2024",
+      dueDate: "17-Mar-2024",
+      amount: "₦ 200,000.00",
+    },
+    {
+      client: "Lionel Ronaldo",
+      invoiceId: "#1234",
+      status: "Draft",
+      issuedDate: "17-Mar-2024",
+      dueDate: "17-Mar-2024",
+      amount: "₦ 200,000.00",
+    },
+    {
+      client: "Lionel Ronaldo",
+      invoiceId: "#1234",
+      status: "Draft",
+      issuedDate: "17-Mar-2024",
+      dueDate: "17-Mar-2024",
+      amount: "₦ 200,000.00",
+    },
+    {
+      client: "Lionel Ronaldo",
+      invoiceId: "#1234",
+      id: "Invoice ID: #1234",
+      status: "Overdue",
+      issuedDate: "17-Mar-2024",
+      dueDate: "17-Mar-2024",
+      amount: "₦ 200,000.00",
+    },
+    {
+      client: "Lionel Ronaldo",
+      invoiceId: "#1234",
+      status: "Overdue",
+      issuedDate: "17-Mar-2024",
+      dueDate: "17-Mar-2024",
+      amount: "₦ 200,000.00",
+    },
+    {
+      client: "Lionel Ronaldo",
+      invoiceId: "#1234",
+      status: "Overdue",
+      issuedDate: "17-Mar-2024",
+      dueDate: "17-Mar-2024",
+      amount: "₦ 200,000.00",
+    },
+  ]);
+
+  const handleOptionChange = (option) => {
+    setSelectedOption(option);
+
+    if (option === "Paid Invoice") {
+      setFilteredInvoices(
+        invoices.filter((invoice) => invoice.status === "Paid")
+      );
+    } else if (option === "Unpaid Invoice") {
+      setFilteredInvoices(
+        invoices.filter((invoice) => invoice.status === "Unpaid")
+      );
+    } else if (option === "Overdue Invoice") {
+      setFilteredInvoices(
+        invoices.filter((invoice) => invoice.status === "Overdue")
+      );
+    } else if (option === "Draft") {
+      setFilteredInvoices(
+        invoices.filter((invoice) => invoice.status === "Draft")
+      );
+    } else {
+      setFilteredInvoices(invoices);
+    }
+  };
+
   const PaidIcon = () => (
     <div className={`bg-[#8DED85] rounded-full p-2`}>
       <svg
@@ -210,11 +170,10 @@ const OverDue = () => {
     </div>
   );
   const OverdueIcon = () => (
-    <div className={`bg-[#FDB3B3] rounded-full p-2`}>
+    <div className='bg-[#FDB3B3] rounded-full p-2'>
       <svg
         width="22"
         height="19"
-        className=" rounded-full"
         viewBox="0 0 22 19"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -234,7 +193,6 @@ const OverDue = () => {
       <svg
         width="18"
         height="21"
-        className=" rounded-full"
         viewBox="0 0 18 21"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -258,23 +216,36 @@ const OverDue = () => {
     { status: "Draft", amount: 1200, icon: <DraftIcon /> },
   ];
 
-  const [showDropdown, setShowDropdown] = useState(null);
+  const [selectedOption, setSelectedOption] = useState("");
+  const [filteredInvoices, setFilteredInvoices] = useState(invoices);
 
+  const [showDropdown, setShowDropdown] = useState(null);
   const toggleDropdown = (index) => {
     setShowDropdown(showDropdown === index ? null : index);
   };
-
   return (
-    <div className="flex mt-16  justify-center py-5">
+    <div className="flex md:flex-row w-full md:max-w-[1440px] ">
       {/* paid invoice section */}
-      <div className="items-center justify-center bg-[#333333] text-white px-4">
-        <div className="mt-[2rem] ml-[2rem]">
+      <div className="md:w-1/5 items-center justify-center bg-black text-white px-4 p-3">
+        <div className=" ml-[2rem]">
           <div className="ml-4">
-            <img src="/KBS.png" alt="Avatar" className="w-[6rem] mr-2" />
+            <img
+              src="/KBS.png"
+              alt="Avatar"
+              className="w-[6rem] mr-2 bg-black"
+            />
           </div>
           <div className="mt-[3rem] text-xs flex flex-col">
             <Link href="/payroll">
-              <button className="relative px-4 py-2 rounded hover:bg-gray-700 flex items-center mt-2">
+              <button className=" relative px-4 py-2 rounded hover:bg-gray-700 flex items-center">
+                <div className="w-2 text-white mr-2">
+                  <img src="/payrol.png" alt="payrol" width={40} />
+                </div>
+                Dashboard
+              </button>
+            </Link>
+            <Link href="/payroll">
+              <button className=" relative px-4 py-2 rounded hover:bg-gray-700 flex items-center mt-2">
                 <div className="w-2 mr-2">
                   <img src="/payrol.png" alt="payrol" width={40} />
                 </div>
@@ -290,7 +261,7 @@ const OverDue = () => {
               </button>
             </Link>
             <Link href="/invoices">
-              <button className="mt-[.6rem] px-4 py-2 lg:w-[9rem] text-start rounded bg-[#FFD700] text-black hover:bg-[#FFD7] flex items-center">
+              <button className=" mt-[.6rem] px-4 py-2 lg:w-[9rem] text-start rounded bg-[#FFD700] text-black hover:bg-[#FFD7] flex items-center">
                 <div className="w-2 mr-2">
                   <img src="/invo.png" alt="payrol" width={40} />
                 </div>
@@ -335,20 +306,20 @@ const OverDue = () => {
             </Link>
           </div>
         </div>
-        <div className="relative p-[1.2rem] bg-white text-xs rounded-3xl text-black mt-[73rem] ml-4 mr-4">
+        <div className="relative p-[1.2rem] bg-gray-300 text-xs rounded-3xl text-black mt-[14.5rem] ml-4 mr-4">
           <div className="absolute top-0 left-1/2 transform -translate-x-1/2">
             <img
-              src="/croo2.png"
-              alt="croo"
+              src="/qc.png"
+              alt="coorq"
               className="w-[3.5rem] mr-1 -mt-[1.8rem]"
             />
           </div>
           <div className="ml-4">
             <div className="mt-3">
-              <p>Are you</p>
-              <p>experiencing</p>
-              <p>problem creating</p>
-              <p>invoice?</p>
+              <p>Do you have any</p>
+              <p>problem making</p>
+              <p>payments or other</p>
+              <p>transactions?</p>
               <p>Kindly contact</p>
               <p>the Help Center</p>
             </div>
@@ -361,9 +332,9 @@ const OverDue = () => {
         </div>
       </div>
       {/* search invoice section */}
-      <div className="text-black bg-white px-9">
-        <div className="flex items-center mt-[2rem]">
-          <div className="flex items-center mr-[3rem]">
+      <div className="text-black md:w-4/5 bg-white px-9 lg:w-full">
+        <div className="flex justify-between mt-[2rem]">
+          <div className="flex">
             <img
               src="/ava.png"
               alt="avata"
@@ -374,12 +345,12 @@ const OverDue = () => {
               <p className="">adam@kbs.com</p>
             </div>
           </div>
-          <div className="flex items-center ml-[4rem]">
-            <div className="flex mr-5 relative">
+          <div className="flex items-center">
+            <div className="flex mr-9">
               <input
                 type="text"
                 placeholder="Search invoices"
-                className="px-[2rem] py-2 border w-[358px] border-gray-300 rounded-full ml-[1rem] pl-8"
+                className="px-[2rem] py-2 border w-[390px] border-gray-300 rounded-full ml-[1rem] pl-8"
                 style={{
                   backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M19 19L13 13M15 8C15 11.866 11.866 15 8 15C4.13401 15 1 11.866 1 8C1 4.13401 4.13401 1 8 1C11.866 1 15 4.13401 15 8Z" stroke="%23666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>')`,
                   backgroundRepeat: "no-repeat",
@@ -388,10 +359,14 @@ const OverDue = () => {
                 }}
               />
             </div>
+            {/* New invoice */}
             <div className="mr-4">
-              <button className="bg-yellow-400 text-black px-4 py-2 rounded-md mr-2">
+              <Link
+                href="/invoice"
+                className="bg-yellow-400 text-black px-4 py-2 rounded-md mr-2"
+              >
                 + New Invoice
-              </button>
+              </Link>
             </div>
             <div className="mr-3">
               <button>
@@ -402,20 +377,15 @@ const OverDue = () => {
                 />
               </button>
             </div>
-            <button className="">
-              <img
-                src="/bellIcon.png"
-                alt="bellIcon"
-                className=" bg-[#8DED85] rounded-full p-[.7rem]"
-                width={40}
-              />
+            <button className="bg-[#8DED85] rounded-full p-[1rem]">
+            <Icon name="bell" className="" />
             </button>
           </div>
         </div>
         {/* Invoice Overview section */}
         <div className="pt-7 mt-[2rem]">
           <h1 className="mb-[1rem] text-2xl">Invoice overview</h1>
-          <div className="flex flex-col bg-[#000000] p-4 rounded-md shadow-md mt-2">
+          <div className="flex flex-col bg-black p-4 rounded-md shadow-md mt-2">
             <div className="grid grid-cols-4 gap-4">
               {invoiceData.map((item) => (
                 <div
@@ -440,79 +410,45 @@ const OverDue = () => {
           </div>
         </div>
         {/* Client list section */}
-        <div className="flex justify-between items-center py-4 mt-6 rounded-md ">
+        <div className="flex justify-between items-center py-6 rounded-md ">
           <h2 className="text-lg">Clients list</h2>
           <div className="flex space-x-4 mr-4">
             <button className="flex items-center gap-2 bg-white text-black px-4 py-2 rounded-md border border-black text-xs font-semibold hover:bg-gray-100 transition-colors duration-200">
               <div>
-                <svg
-                  width="10"
-                  height="10"
-                  viewBox="0 0 10 10"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M7.5 7.5H8.5C9.05229 7.5 9.5 7.05228 9.5 6.5V4.5C9.5 3.94772 9.05229 3.5 8.5 3.5H1.5C0.947715 3.5 0.5 3.94772 0.5 4.5V6.5C0.5 7.05228 0.947715 7.5 1.5 7.5H2.5M3.5 9.5H6.5C7.05228 9.5 7.5 9.05228 7.5 8.5V6.5C7.5 5.94772 7.05228 5.5 6.5 5.5H3.5C2.94772 5.5 2.5 5.94772 2.5 6.5V8.5C2.5 9.05228 2.94772 9.5 3.5 9.5ZM7.5 3.5V1.5C7.5 0.947715 7.05228 0.5 6.5 0.5H3.5C2.94772 0.5 2.5 0.947715 2.5 1.5V3.5H7.5Z"
-                    stroke="#333333"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
+              <Icon name="printInvoice" className="" />
               </div>
               Print Invoice
             </button>
             <button className="flex gap-2 items-center bg-white px-4 py-2 rounded-md border border-black text-xs font-semibold hover:bg-gray-100 transition-colors duration-200">
               <div>
-                <svg
-                  width="10"
-                  height="10"
-                  viewBox="0 0 10 10"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M1 7L1 7.5C1 8.32843 1.67157 9 2.5 9L7.5 9C8.32843 9 9 8.32843 9 7.5L9 7M7 3L5 1M5 1L3 3M5 1L5 7"
-                    stroke="#333333"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
+              <Icon name="exportInvoice" className="" />
               </div>
               Export Invoice
             </button>
             <div className="relative">
-              <select className="appearance-none bg-white px-4 py-3 rounded-md border font-medium border-black text-black text-xs hover:bg-gray-100 transition-colors duration-200 pr-8">
-              <option>All Invoice</option>
-                <option>Overdue Invoice</option>
-                <option>Unpaid Invoice</option>
-                <option>Paid Invoice</option>
-                <option>Draft</option>
+              <select
+                className="appearance-none bg-white px-4 py-3 rounded-md border font-medium border-black text-black text-xs hover:bg-gray-100 transition-colors duration-200 pr-8"
+                value={selectedOption}
+                onChange={(e) => handleOptionChange(e.target.value)}
+              >
+                <option value="All Invoice">All Invoices</option>
+                <option value="Paid Invoice">Paid Invoice</option>
+                <option value="Unpaid Invoice">Unpaid Invoice</option>
+                <option value="Overdue Invoice">Overdue Invoice</option>
+                <option value="Draft">Draft</option>
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                <svg
-                  className="fill-current h-4 w-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                </svg>
+              <Icon name="dropDown" className="" />
               </div>
             </div>
             <div className="relative">
-              <select className="appearance-none bg-white text-gray-400 border border-gray-400 font-medium px-4 py-2 rounded-md hover:bg-gray-100 transition-colors duration-200 pr-8">
-                <option>Last 30 days</option>
-                <option>Last 60 days</option>
-                <option>Last 90 days</option>
+              <select className="appearance-none text-xs text-gray-400 border border-gray-400 font-medium px-4 py-3 rounded-md hover:bg-gray-100 transition-colors duration-200 pr-8">
+                <option className="text-xs">Last 30 days</option>
+                <option className="text-xs">Last 60 days</option>
+                <option className="text-xs">Last 90 days</option>
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                <svg
-                  className="fill-current h-4 w-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                </svg>
+              <Icon name="dropDown" className="" />
               </div>
             </div>
           </div>
@@ -524,24 +460,7 @@ const OverDue = () => {
               <thead className="bg-black rounded-t-lg ">
                 <tr className="text-sm text-white">
                   <th className="py-2 px-4 flex items-center">
-                    <svg
-                      className="h-6 w-4 mr-4"
-                      width="16"
-                      height="17"
-                      viewBox="0 0 16 17"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <rect
-                        x="0.4"
-                        y="0.9"
-                        width="15.2"
-                        height="15.2"
-                        rx="2.8"
-                        stroke="#949494"
-                        strokeWidth="0.8"
-                      />
-                    </svg>
+                  <Icon name="checkBox" className="" />
                     Client
                   </th>
                   <th className="py-2 px-4">Status</th>
@@ -552,44 +471,13 @@ const OverDue = () => {
                 </tr>
               </thead>
               <tbody className="">
-                {invoices.map((invoice, index) => (
+                {filteredInvoices.map((invoice, index) => (
                   <tr key={index}>
                     <td className="py-2 px-4 ml-9">
                       <div className="flex items-center">
                         <div className="mr-4 flex">
-                          <svg
-                            width="16"
-                            className="mr-7"
-                            height="17"
-                            viewBox="0 0 16 17"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <rect
-                              x="0.4"
-                              y="0.9"
-                              width="15.2"
-                              height="15.2"
-                              rx="2.8"
-                              stroke="#949494"
-                              strokeWidth="0.8"
-                            />
-                          </svg>
-                          <svg
-                            width="20"
-                            height="21"
-                            viewBox="0 0 20 21"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M3.12104 16.3037C5.15267 15.1554 7.4998 14.5 10 14.5C12.5002 14.5 14.8473 15.1554 16.879 16.3037M13 8.5C13 10.1569 11.6569 11.5 10 11.5C8.34315 11.5 7 10.1569 7 8.5C7 6.84315 8.34315 5.5 10 5.5C11.6569 5.5 13 6.84315 13 8.5ZM19 10.5C19 15.4706 14.9706 19.5 10 19.5C5.02944 19.5 1 15.4706 1 10.5C1 5.52944 5.02944 1.5 10 1.5C14.9706 1.5 19 5.52944 19 10.5Z"
-                              stroke="#333333"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
+                        <Icon name="checkBox" className="" />
+                        <Icon name="avatar" className="" />
                         </div>
                         <div>
                           <div>{invoice.client}</div>
@@ -599,11 +487,10 @@ const OverDue = () => {
                         </div>
                       </div>
                     </td>
-
-                    <td className="py-2 px-7">{invoice.status}</td>
-                    <td className="py-2 px-7">{invoice.issuedDate}</td>
-                    <td className="py-2 px-6">{invoice.dueDate}</td>
-                    <td className="py-2 px-6">
+                    <td className="py-2 px-[3rem]">{invoice.status}</td>
+                    <td className="py-2 px-[3rem]">{invoice.issuedDate}</td>
+                    <td className="py-2 px-[3rem]">{invoice.dueDate}</td>
+                    <td className="py-2 px-[3rem]">
                       {invoice.amount.toLocaleString()}
                     </td>
                     <td className="py-2 px-[4rem] relative">
@@ -611,95 +498,26 @@ const OverDue = () => {
                         className="hover:bg-gray-400 text-gray-800 py-1 px-2 rounded"
                         onClick={() => toggleDropdown(index)}
                       >
-                        <svg
-                          width="4"
-                          height="19"
-                          viewBox="0 0 4 19"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M2 2.5L2 2.51M2 9.5L2 9.51M2 16.5L2 16.51M2 3.5C1.44772 3.5 1 3.05228 1 2.5C1 1.94772 1.44772 1.5 2 1.5C2.55228 1.5 3 1.94772 3 2.5C3 3.05228 2.55228 3.5 2 3.5ZM2 10.5C1.44771 10.5 1 10.0523 1 9.5C1 8.94772 1.44771 8.5 2 8.5C2.55228 8.5 3 8.94772 3 9.5C3 10.0523 2.55228 10.5 2 10.5ZM2 17.5C1.44771 17.5 0.999999 17.0523 0.999999 16.5C0.999999 15.9477 1.44771 15.5 2 15.5C2.55228 15.5 3 15.9477 3 16.5C3 17.0523 2.55228 17.5 2 17.5Z"
-                            stroke="#333333"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
+                        <Icon name="action" className="" />
                       </button>
                       {showDropdown === index && (
                         <div className="absolute right-0 mt-2 py-4 px-4 mr-3 bg-white shadow-md rounded-md z-10">
-                          <button className="flex w-full gap-1 items-center text-[#8DED85] px-2 text-sm hover:bg-gray-100">
-                            <svg
-                              width="14"
-                              height="13"
-                              viewBox="0 0 14 13"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M6.05878 2.3798H2.67277C1.92475 2.3798 1.31836 2.98619 1.31836 3.73421V11.1834C1.31836 11.9315 1.92475 12.5378 2.67277 12.5378H10.122C10.87 12.5378 11.4764 11.9315 11.4764 11.1834V7.79742M10.5187 1.42209C11.0476 0.893158 11.9052 0.893158 12.4341 1.42209C12.963 1.95102 12.963 2.80858 12.4341 3.33751L6.61979 9.15183H4.70438L4.70437 7.23641L10.5187 1.42209Z"
-                                stroke="#8DED85"
-                                strokeWidth="0.677203"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </svg>
+                          <button className="flex w-full gap-2 mb-1 mt-2 items-center text-[#8DED85] px-2 text-sm hover:bg-gray-100">
+                          <Icon name="edit" className="" />
                             Edit/Resend
                           </button>
-
-                          <button className="flex items-center w-full gap-2 text-[#F5D563] px-2 text-sm hover:bg-gray-100">
-                            <svg
-                              width="13"
-                              height="14"
-                              viewBox="0 0 13 14"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M8.76759 10.5629H12.1536L11.2022 9.61145C10.9442 9.35343 10.7992 9.00347 10.7992 8.63857V6.49966C10.7992 4.73051 9.66853 3.22544 8.09039 2.66765V2.43644C8.09039 1.68842 7.484 1.08203 6.73598 1.08203C5.98797 1.08203 5.38158 1.68842 5.38158 2.43644V2.66765C3.80343 3.22544 2.67277 4.73051 2.67277 6.49966V8.63857C2.67277 9.00347 2.52781 9.35343 2.26978 9.61145L1.31836 10.5629H4.70437M8.76759 10.5629V11.2401C8.76759 12.3621 7.85801 13.2717 6.73598 13.2717C5.61396 13.2717 4.70437 12.3621 4.70437 11.2401V10.5629M8.76759 10.5629H4.70437"
-                                stroke="#F5D563"
-                                strokeWidth="0.677203"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </svg>
+                          <button className="flex items-center w-full mb-1 gap-2 text-[#F5D563] px-2 text-sm hover:bg-gray-100">
+                          <Icon name="notify" className="" />
                             Notify
                           </button>
-                          <button className="flex items-center gap-2 w-full px-2 text-sm text-[#FB4545] hover:bg-gray-100">
-                            <svg
-                              width="14"
-                              height="12"
-                              viewBox="0 0 14 12"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M1.99503 3.52717H11.4759M1.99503 3.52717C1.24701 3.52717 0.640625 2.92078 0.640625 2.17277C0.640625 1.42475 1.24701 0.818359 1.99503 0.818359H11.4759C12.2239 0.818359 12.8303 1.42475 12.8303 2.17277C12.8303 2.92078 12.2239 3.52717 11.4759 3.52717M1.99503 3.52717L1.99503 10.2992C1.99503 11.0472 2.60142 11.6536 3.34944 11.6536H10.1215C10.8695 11.6536 11.4759 11.0472 11.4759 10.2992V3.52717M5.38105 6.23598H8.08986"
-                                stroke="#FB4545"
-                                strokeWidth="0.677203"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </svg>
-                            Delete
-                          </button>
+                          <Link href="/delete">
+                            <button className="flex items-center gap-2 w-full px-2 text-sm text-[#FB4545] hover:bg-gray-100">
+                            <Icon name="delete" className="" />
+                              Delete
+                            </button>
+                          </Link>
                           <button className="flex items-center gap-2 w-full text-sm text-[#FFD700] py-1 px-2 hover:bg-gray-100">
-                            <svg
-                              width="13"
-                              height="13"
-                              viewBox="0 0 13 13"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M1.31836 9.00213L1.31836 9.67933C1.31836 10.8014 2.22794 11.7109 3.34997 11.7109L10.122 11.7109C11.244 11.7109 12.1536 10.8014 12.1536 9.67933L12.1536 9.00212M9.4448 6.29331L6.73598 9.00212M6.73598 9.00212L4.02717 6.29331M6.73598 9.00212L6.73598 0.875687"
-                                stroke="#FFD700"
-                                strokeWidth="0.677203"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </svg>
+                          <Icon name="download" className="" />
                             Download
                           </button>
                         </div>
@@ -714,18 +532,7 @@ const OverDue = () => {
         {/* Pagination */}
         <div className="flex justify-center items-center space-x-2 mt-[2rem] mb-7">
           <button className="bg-white text-gray-700 px-3 py-2 border border-gray-300 rounded hover:bg-gray-100 transition-colors duration-200">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                clipRule="evenodd"
-              />
-            </svg>
+          <Icon name="leftPagination" className="" />
           </button>
           <button className=" text-gray-500 px-3 py-2 hover:bg-gray-100 transition-colors duration-200">
             1
@@ -743,18 +550,7 @@ const OverDue = () => {
             5
           </button>
           <button className=" text-black px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors duration-200">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                clipRule="evenodd"
-              />
-            </svg>
+          <Icon name="rightPagination" className="" />
           </button>
         </div>
       </div>
@@ -762,4 +558,4 @@ const OverDue = () => {
   );
 };
 
-export default OverDue;
+export default AllInvoice;

@@ -2,6 +2,7 @@
 import { useState } from "react";
 import React from "react";
 import Link from "next/link";
+import Icon from "../Icon/Icon";
 const OverDue = () => {
   const invoices = [
     {
@@ -506,76 +507,20 @@ const OverDue = () => {
                       {showDropdown === index && (
                         <div className="absolute right-0 mt-2 py-4 px-4 mr-3 bg-white shadow-md rounded-md z-10">
                           <button className="flex w-full gap-1 items-center text-[#8DED85] px-2 text-sm hover:bg-gray-100">
-                            <svg
-                              width="14"
-                              height="13"
-                              viewBox="0 0 14 13"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M6.05878 2.3798H2.67277C1.92475 2.3798 1.31836 2.98619 1.31836 3.73421V11.1834C1.31836 11.9315 1.92475 12.5378 2.67277 12.5378H10.122C10.87 12.5378 11.4764 11.9315 11.4764 11.1834V7.79742M10.5187 1.42209C11.0476 0.893158 11.9052 0.893158 12.4341 1.42209C12.963 1.95102 12.963 2.80858 12.4341 3.33751L6.61979 9.15183H4.70438L4.70437 7.23641L10.5187 1.42209Z"
-                                stroke="#8DED85"
-                                strokeWidth="0.677203"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </svg>
+                            <Icon name="edit" className="" />
                             Edit/Resend
                           </button>
 
                           <button className="flex items-center w-full gap-2 text-[#F5D563] px-2 text-sm hover:bg-gray-100">
-                            <svg
-                              width="13"
-                              height="14"
-                              viewBox="0 0 13 14"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M8.76759 10.5629H12.1536L11.2022 9.61145C10.9442 9.35343 10.7992 9.00347 10.7992 8.63857V6.49966C10.7992 4.73051 9.66853 3.22544 8.09039 2.66765V2.43644C8.09039 1.68842 7.484 1.08203 6.73598 1.08203C5.98797 1.08203 5.38158 1.68842 5.38158 2.43644V2.66765C3.80343 3.22544 2.67277 4.73051 2.67277 6.49966V8.63857C2.67277 9.00347 2.52781 9.35343 2.26978 9.61145L1.31836 10.5629H4.70437M8.76759 10.5629V11.2401C8.76759 12.3621 7.85801 13.2717 6.73598 13.2717C5.61396 13.2717 4.70437 12.3621 4.70437 11.2401V10.5629M8.76759 10.5629H4.70437"
-                                stroke="#F5D563"
-                                strokeWidth="0.677203"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </svg>
+                            <Icon name="notify" className="" />
                             Notify
                           </button>
                           <button className="flex items-center gap-2 w-full px-2 text-sm text-[#FB4545] hover:bg-gray-100">
-                            <svg
-                              width="14"
-                              height="12"
-                              viewBox="0 0 14 12"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M1.99503 3.52717H11.4759M1.99503 3.52717C1.24701 3.52717 0.640625 2.92078 0.640625 2.17277C0.640625 1.42475 1.24701 0.818359 1.99503 0.818359H11.4759C12.2239 0.818359 12.8303 1.42475 12.8303 2.17277C12.8303 2.92078 12.2239 3.52717 11.4759 3.52717M1.99503 3.52717L1.99503 10.2992C1.99503 11.0472 2.60142 11.6536 3.34944 11.6536H10.1215C10.8695 11.6536 11.4759 11.0472 11.4759 10.2992V3.52717M5.38105 6.23598H8.08986"
-                                stroke="#FB4545"
-                                strokeWidth="0.677203"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </svg>
+                            <Icon name="delete" className="" />
                             Delete
                           </button>
                           <button className="flex items-center gap-2 w-full text-sm text-[#FFD700] py-1 px-2 hover:bg-gray-100">
-                            <svg
-                              width="13"
-                              height="13"
-                              viewBox="0 0 13 13"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M1.31836 9.00213L1.31836 9.67933C1.31836 10.8014 2.22794 11.7109 3.34997 11.7109L10.122 11.7109C11.244 11.7109 12.1536 10.8014 12.1536 9.67933L12.1536 9.00212M9.4448 6.29331L6.73598 9.00212M6.73598 9.00212L4.02717 6.29331M6.73598 9.00212L6.73598 0.875687"
-                                stroke="#FFD700"
-                                strokeWidth="0.677203"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </svg>
+                            <Icon name="download" className="" />
                             Download
                           </button>
                         </div>
@@ -590,18 +535,7 @@ const OverDue = () => {
         {/* Pagination */}
         <div className="flex justify-center items-center space-x-2 mt-[2rem] mb-7">
           <button className="bg-white text-gray-700 px-3 py-2 border border-gray-300 rounded hover:bg-gray-100 transition-colors duration-200">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                clipRule="evenodd"
-              />
-            </svg>
+            <Icon name="leftPagination" className="" />
           </button>
           <button className=" text-gray-500 px-3 py-2 hover:bg-gray-100 transition-colors duration-200">
             1
@@ -619,18 +553,7 @@ const OverDue = () => {
             5
           </button>
           <button className=" text-black px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors duration-200">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                clipRule="evenodd"
-              />
-            </svg>
+            <Icon name="rightPagination" className="" />
           </button>
         </div>
       </div>

@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import Dropzone from "react-dropzone";
 import Link from "next/link";
+import Icon from "../Icon/Icon";
 const InvoiceForm = () => {
   // Define the state for storing the dropped image file
   const [imageFile, setImageFile] = useState(null);
@@ -27,7 +28,7 @@ const InvoiceForm = () => {
       <div className="md:w-1/6 bg-black text-white">
         <div className="mt-[3rem] ml-[2rem]">
           <div className="ml-4">
-            <img src="/KBS.png" alt="Avatar" className="w-[6rem] mr-2" />
+            <img src="/KBS.png" alt="kbs logo" className="w-[6rem] mr-2" />
           </div>
           <div className="text-sm mt-[5.5rem]">
             <Link href="/payroll">
@@ -91,21 +92,7 @@ const InvoiceForm = () => {
       <div className="flex flex-col mt-[11rem] ml-[2rem] w-[75rem]">
         <div className="mb-4">
         <Link href='/' className="flex gap-2 items-center text-2xl">
-          <svg
-            width="20"
-            height="16"
-            viewBox="0 0 20 16"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M8 15L1 8M1 8L8 1M1 8L19 8"
-              stroke="#111827"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
+        <Icon name="arrowLeft" className="" />
           Create new invoice
           </Link>
         </div>
@@ -126,50 +113,7 @@ const InvoiceForm = () => {
                 >
                   <input {...getInputProps()} />
                   <div className="flex flex-col items-center mt-[3rem]">
-                    <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 20 20"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <mask
-                        id="mask0_2614_2818"
-                        style={{ maskType: "luminance" }}
-                        maskUnits="userSpaceOnUse"
-                        x="0"
-                        y="0"
-                        width="20"
-                        height="20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          clipRule="evenodd"
-                          d="M0.000488281 0H19.9601V19.9498H0.000488281V0Z"
-                          fill="white"
-                        />
-                      </mask>
-                      <g mask="url(#mask0_2614_2818)">
-                        <path
-                          fillRule="evenodd"
-                          clipRule="evenodd"
-                          d="M5.65049 1.5C3.12949 1.5 1.50049 3.227 1.50049 5.899V14.051C1.50049 16.724 3.12949 18.45 5.65049 18.45H14.3005C16.8275 18.45 18.4605 16.724 18.4605 14.051V5.899C18.4605 3.227 16.8275 1.5 14.3005 1.5H5.65049ZM14.3005 19.95H5.65049C2.27049 19.95 0.000488281 17.579 0.000488281 14.051V5.899C0.000488281 2.371 2.27049 0 5.65049 0H14.3005C17.6855 0 19.9605 2.371 19.9605 5.899V14.051C19.9605 17.579 17.6855 19.95 14.3005 19.95Z"
-                          fill="#AFB1B6"
-                        />
-                      </g>
-                      <path
-                        fillRule="evenodd"
-                        clipRule="evenodd"
-                        d="M3.28126 15.1799C3.09526 15.1799 2.91026 15.1119 2.76526 14.9739C2.46426 14.6899 2.45226 14.2139 2.73726 13.9149L4.26526 12.3019C5.07426 11.4429 6.43926 11.4009 7.30226 12.2109L8.26026 13.1829C8.52726 13.4529 8.96126 13.4579 9.22926 13.1939C9.33026 13.0749 11.5083 10.4299 11.5083 10.4299C11.9223 9.92789 12.5063 9.61789 13.1553 9.55389C13.8053 9.49689 14.4363 9.68589 14.9393 10.0989C14.9823 10.1339 15.0213 10.1679 17.2173 12.4229C17.5063 12.7189 17.5013 13.1939 17.2043 13.4829C16.9083 13.7739 16.4323 13.7649 16.1433 13.4689C16.1433 13.4689 14.0943 11.3659 13.9483 11.2239C13.7933 11.0969 13.5443 11.0229 13.2993 11.0469C13.0503 11.0719 12.8263 11.1909 12.6673 11.3839C10.3433 14.2029 10.3153 14.2299 10.2773 14.2669C9.41926 15.1089 8.03426 15.0949 7.19126 14.2349C7.19126 14.2349 6.26126 13.2909 6.24526 13.2719C6.01426 13.0579 5.60226 13.0719 5.35526 13.3329L3.82526 14.9459C3.67726 15.1019 3.47926 15.1799 3.28126 15.1799Z"
-                        fill="#AFB1B6"
-                      />
-                      <path
-                        fillRule="evenodd"
-                        clipRule="evenodd"
-                        d="M6.55769 6.12891C6.00469 6.12891 5.55469 6.57891 5.55469 7.13291C5.55469 7.68691 6.00469 8.13791 6.55869 8.13791C7.11269 8.13791 7.56369 7.68691 7.56369 7.13291C7.56369 6.57991 7.11269 6.12991 6.55769 6.12891ZM6.55869 9.63791C5.17769 9.63791 4.05469 8.51391 4.05469 7.13291C4.05469 5.75191 5.17769 4.62891 6.55869 4.62891C7.94069 4.62991 9.06369 5.75391 9.06369 7.13291C9.06369 8.51391 7.93969 9.63791 6.55869 9.63791Z"
-                        fill="#AFB1B6"
-                      />
-                    </svg>
+                  <Icon name="uploadImg" className="" />
                     <div className="text-gray-600 text-sm text-center mt-3">
                       <p className="mb-1">Upload or drag your brand</p>
                       <p>logo here</p>
@@ -256,21 +200,7 @@ const InvoiceForm = () => {
             </label>
             <div className="flex items-center border-2 rounded p-2 w-[50rem] ml-5">
               <span className="px-2 text-gray-500">
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 20 20"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M1 3C1 1.89543 1.89543 1 3 1H6.27924C6.70967 1 7.09181 1.27543 7.22792 1.68377L8.72574 6.17721C8.88311 6.64932 8.66938 7.16531 8.22427 7.38787L5.96701 8.5165C7.06925 10.9612 9.03878 12.9308 11.4835 14.033L12.6121 11.7757C12.8347 11.3306 13.3507 11.1169 13.8228 11.2743L18.3162 12.7721C18.7246 12.9082 19 13.2903 19 13.7208V17C19 18.1046 18.1046 19 17 19H16C7.71573 19 1 12.2843 1 4V3Z"
-                    stroke="#BFBFBF"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+              <Icon name="telephone" className="" />
               </span>
               <input
                 type="tel"
@@ -287,21 +217,7 @@ const InvoiceForm = () => {
             </label>
             <div className="flex items-center border-2 rounded p-2 w-[50rem] ml-5 mb-9">
               <span className="px-2 text-gray-500">
-                <svg
-                  width="20"
-                  height="16"
-                  viewBox="0 0 20 16"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M1 4L8.8906 9.2604C9.5624 9.70827 10.4376 9.70827 11.1094 9.2604L19 4M3 15H17C18.1046 15 19 14.1046 19 13V3C19 1.89543 18.1046 1 17 1H3C1.89543 1 1 1.89543 1 3V13C1 14.1046 1.89543 15 3 15Z"
-                    stroke="#BFBFBF"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+              <Icon name="email" className="" />
               </span>
               <input
                 type="email"
@@ -537,21 +453,7 @@ const InvoiceForm = () => {
           <Link href='/invoicePreview' className="flex gap-2 bg-[#FFD700] hover:bg-gray-300 text-black py-2 px-4 rounded-sm">
             Proceed to review
             <div className="mt-[.6rem]">
-              <svg
-                width="14"
-                height="8"
-                viewBox="0 0 14 8"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M9.75461 1.52148L12.2336 4.00048M12.2336 4.00048L9.75461 6.47948M12.2336 4.00048L1.07812 4.00048"
-                  stroke="black"
-                  stroke-width="1.85925"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
+            <Icon name="arrowRight" className="" />
             </div>
           </Link>
         </div>
