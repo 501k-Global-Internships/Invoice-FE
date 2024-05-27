@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-function PasswordSuccessfull() {
+function PasswordSuccessful() {
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <div className="p-[20px] bg-[#FFD700] rounded-full">
@@ -39,4 +39,4 @@ function PasswordSuccessfull() {
   );
 }
 
-export default PasswordSuccessfull;
+export default PasswordSuccessful;

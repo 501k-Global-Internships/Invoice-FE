@@ -1,174 +1,480 @@
 "use client";
-import { useState } from "react";
-import React from "react";
+import React, { useState, useEffect, useRef } from 'react';
 import Link from "next/link";
+import { useRouter } from 'next/navigation'
+import axios from "../api/axios";
+
 const OverDue = () => {
-  const invoices = [
-    {
-        client: "Lionel Ronaldo",
-        invoiceId: "#1234",
-        id: "Invoice ID: #1234",
-        status: "Paid",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "1234",
-        status: "Paid",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "#1234",
-        status: "Paid",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "#1234",
-        status: "Paid",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "#1234",
-        status: "Paid",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "#1234",
-        id: "Invoice ID: #1234",
-        status: "Unpaid",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "1234",
-        status: "Unpaid",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "#1234",
-        status: "Unpaid",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "#1234",
-        status: "Unpaid",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "#1234",
-        status: "Unpaid",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "#1234",
-        id: "Invoice ID: #1234",
-        status: "Draft",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "1234",
-        status: "Draft",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "#1234",
-        status: "Draft",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "#1234",
-        status: "Draft",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "#1234",
-        status: "Draft",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "#1234",
-        id: "Invoice ID: #1234",
-        status: "Overdue",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "1234",
-        status: "Overdue",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "#1234",
-        status: "Overdue",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "#1234",
-        status: "Overdue",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-      {
-        client: "Lionel Ronaldo",
-        invoiceId: "#1234",
-        status: "Overdue",
-        issuedDate: "17-Mar-2024",
-        dueDate: "17-Mar-2024",
-        amount: "₦ 200,000.00",
-      },
-  ];
+  const [invoices, setInvoices] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(null);
+
+  const [paidInvoicesCount, setPaidInvoicesCount] = useState('')
+  const [unpaidInvoicesCount, setUnpaidInvoicesCount] = useState('')
+  const [overdueInvoicesCount, setOverdueInvoicesCount] = useState('')
+  const [draftInvoicesCount, setDraftInvoicesCount] = useState('')
+
+  const errRef = useRef();
+  const [errMsg, setErrMsg] = useState('');
+  const router = useRouter();
+
+  const [email, setEmail] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [nameAbbr, setNameAbbr] = useState('')
+
+  useEffect(() => {
+    const email = localStorage.getItem('kbsEmail');
+    const fullName = localStorage.getItem('name');
+    if (fullName) {
+      const lastName = fullName.split(' ')[1];
+      const nameAbbr = `${fullName.charAt(0)}${lastName.charAt(0)}`;
+      setNameAbbr(nameAbbr);
+    }
+    setEmail(email);
+    setFullName(fullName);
+  }, []);
+
+  const getInvoices = async () => {
+    try {
+      const response = await axios.get('/invoices', {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + localStorage.getItem('token'),
+        },
+        withCredentials: true
+      });
+      setInvoices(response.data.invoices);
+      console.log(invoices);
+    } catch (err) {
+      console.error(err);
+      if (!err?.response) {
+        setErrMsg('No Server Response!');
+      } else if (err.response?.status === 403) {
+        setErrMsg('Oops! You are not authorized to consume this resource.')
+      } else {
+        router.push('/');
+      }
+    }
+  }
+
+  const getPaidInvoices = async () => {
+    try {
+      const response = await axios.get('/invoices?status=paid', {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + localStorage.getItem('token'),
+        },
+        withCredentials: true
+      });
+      setInvoices(response.data.invoices);
+    } catch (err) {
+      console.error(err);
+      if (!err?.response) {
+        setErrMsg('No Server Response!');
+      } else if (err.response?.status === 403) {
+        setErrMsg('Oops! You are not authorized to consume this resource.')
+      } else {
+        router.push('/');
+      }
+    }
+  }
+
+  const getUnpaidInvoices = async () => {
+    try {
+      const response = await axios.get('/invoices?status=unpaid', {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + localStorage.getItem('token'),
+        },
+        withCredentials: true
+      });
+      setInvoices(response.data.invoices);
+    } catch (err) {
+      console.error(err);
+      if (!err?.response) {
+        setErrMsg('No Server Response!');
+      } else if (err.response?.status === 403) {
+        setErrMsg('Oops! You are not authorized to consume this resource.')
+      } else {
+        router.push('/');
+      }
+    }
+  }
+
+  const getOverdueInvoices = async () => {
+    try {
+      const response = await axios.get('/invoices?status=overdue', {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + localStorage.getItem('token'),
+        },
+        withCredentials: true
+      });
+      setInvoices(response.data.invoices);
+    } catch (err) {
+      console.error(err);
+      if (!err?.response) {
+        setErrMsg('No Server Response!');
+      } else if (err.response?.status === 403) {
+        setErrMsg('Oops! You are not authorized to consume this resource.')
+      } else {
+        router.push('/');
+      }
+    }
+  }
+
+  const getDraftInvoices = async () => {
+    try {
+      const response = await axios.get('/invoices?status=draft', {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + localStorage.getItem('token'),
+        },
+        withCredentials: true
+      });
+      setInvoices(response.data.invoices);
+    } catch (err) {
+      console.error(err);
+      if (!err?.response) {
+        setErrMsg('No Server Response!');
+      } else if (err.response?.status === 403) {
+        setErrMsg('Oops! You are not authorized to consume this resource.')
+      } else {
+        router.push('/');
+      }
+    }
+  }
+
+  const getThirtyDaysInvoices = async () => {
+    try {
+      const response = await axios.get('/invoices?dateFilter=last30', {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + localStorage.getItem('token'),
+        },
+        withCredentials: true
+      });
+      setInvoices(response.data.invoices);
+    } catch (err) {
+      console.error(err);
+      if (!err?.response) {
+        setErrMsg('No Server Response!');
+      } else if (err.response?.status === 403) {
+        setErrMsg('Oops! You are not authorized to consume this resource.')
+      } else {
+        router.push('/');
+      }
+    }
+  }
+  const getSixtyDaysInvoices = async () => {
+    try {
+      const response = await axios.get('/invoices?dateFilter=last60', {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + localStorage.getItem('token'),
+        },
+        withCredentials: true
+      });
+      setInvoices(response.data.invoices);
+    } catch (err) {
+      console.error(err);
+      if (!err?.response) {
+        setErrMsg('No Server Response!');
+      } else if (err.response?.status === 403) {
+        setErrMsg('Oops! You are not authorized to consume this resource.')
+      } else {
+        router.push('/');
+      }
+    }
+  }
+  const getNinetyDaysInvoices = async () => {
+    try {
+      const response = await axios.get('/invoices?dateFilter=last90', {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + localStorage.getItem('token'),
+        },
+        withCredentials: true
+      });
+      setInvoices(response.data.invoices);
+    } catch (err) {
+      console.error(err);
+      if (!err?.response) {
+        setErrMsg('No Server Response!');
+      } else if (err.response?.status === 403) {
+        setErrMsg('Oops! You are not authorized to consume this resource.')
+      } else {
+        router.push('/');
+      }
+    }
+  }
+
+  const changeStatusToPaid = async (id) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error('No token found in localStorage');
+        router.push('/');
+        return;
+      }
+
+      const response = await axios.patch(`/update-invoice-status/${id}`, {}, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        withCredentials: true,
+      });
+
+      console.log(response.data);
+      setInvoices((prevInvoices) =>
+        prevInvoices.map((invoice) =>
+          invoice.id === id ? { ...invoice, status: 'paid' } : invoice
+        )
+      );
+    } catch (err) {
+      console.error('Error:', err);
+      if (err.response) {
+        console.error('Response data:', err.response.data);
+        console.error('Response status:', err.response.status);
+        console.error('Response headers:', err.response.headers);
+      }
+      router.push('/');
+    }
+  }
+
+  const handleDeleteClick = async (id) => {
+    try {
+      const response = await axios.delete(`/delete-invoice/${id}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + localStorage.getItem('token'),
+        },
+        withCredentials: true
+      });
+
+      console.log(response.data);
+      setInvoices((prevInvoices) => prevInvoices.filter(invoice => invoice.id !== id));
+      router.push('/invoiceDelete');
+    } catch (err) {
+      console.error(err);
+      router.push('/');
+    }
+  }
+
+  const downloadInvoice = async (id) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`/download-invoice/${id}`, {
+        responseType: 'blob', // Important to handle binary data
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+  
+      // Create a URL for the blob
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+  
+      // Set the download attribute with a dynamic file name
+      link.setAttribute('download', `invoice_${id}.pdf`); // Set the file name
+  
+      // Append the link to the document, click it, and remove it
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Error downloading invoice:', error);
+    }
+  };
+  
+  const handleSelectChangeStatus = async (selectedValue) => {
+    try {
+      switch (selectedValue) {
+        case 'all':
+          await getInvoices();
+          break;
+        case 'paid':
+          await getPaidInvoices();
+          break;
+        case 'unpaid':
+          await getUnpaidInvoices();
+          break;
+        case 'overdue':
+          await getOverdueInvoices();
+          break;
+        case 'draft':
+          await getDraftInvoices();
+          break;
+        default:
+          break;
+      }
+    } catch (err) {
+      console.error('Error fetching invoices:', err);
+    }
+  };
+
+  const handleSelectChangeDays = async (selectedValue) => {
+    try {
+      switch (selectedValue) {
+        case 'last30':
+          await getThirtyDaysInvoices();
+          break;
+        case 'last60':
+          await getSixtyDaysInvoices();
+          break;
+        case 'last90':
+          await getNinetyDaysInvoices();
+          break;
+        default:
+          break;
+      }
+    } catch (err) {
+      console.error('Error fetching invoices:', err);
+    }
+  };
+
+  const handleInvoiceSearch = async (e) => {
+    try {
+      const value = e.target.value;
+      const response = await axios.get(`/invoices?searchKey=${value}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + localStorage.getItem('token'),
+        },
+        withCredentials: true
+      });
+      setInvoices(response.data.invoices);
+    } catch (err) {
+      console.error(err);
+      if (!err?.response) {
+        setErrMsg('No Server Response!');
+      } else if (err.response?.status === 403) {
+        setErrMsg('Oops! You are not authorized to consume this resource.')
+      } else {
+        router.push('/');
+      }
+    }
+  }
+
+  useEffect(() => {
+    const getInvoices = async () => {
+      try {
+        const response = await axios.get('/invoices', {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + localStorage.getItem('token'),
+          },
+          withCredentials: true
+        });
+        setInvoices(response.data.invoices);
+      } catch (err) {
+        console.error(err);
+        if (!err?.response) {
+          setErrMsg('No Server Response!');
+        } else if (err.response?.status === 403) {
+          setErrMsg('Oops! You are not authorized to consume this resource.')
+        } else {
+          router.push('/');
+        }
+      }
+    }
+
+    const getPaidInvoices = async () => {
+      try {
+        const response = await axios.get('/invoices?status=paid', {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + localStorage.getItem('token'),
+          },
+          withCredentials: true
+        });
+        setPaidInvoicesCount(response.data.count);
+      } catch (err) {
+        console.error(err);
+        if (!err?.response) {
+          setErrMsg('No Server Response!');
+        } else if (err.response?.status === 403) {
+          setErrMsg('Oops! You are not authorized to consume this resource.')
+        } else {
+          router.push('/');
+        }
+      }
+    }
+
+    const getUnpaidInvoices = async () => {
+      try {
+        const response = await axios.get('/invoices?status=unpaid', {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + localStorage.getItem('token'),
+          },
+          withCredentials: true
+        });
+        setUnpaidInvoicesCount(response.data.count);
+      } catch (err) {
+        console.error(err);
+        if (!err?.response) {
+          setErrMsg('No Server Response!');
+        } else if (err.response?.status === 403) {
+          setErrMsg('Oops! You are not authorized to consume this resource.')
+        } else {
+          router.push('/');
+        }
+      }
+    }
+
+    const getOverdueInvoices = async () => {
+      try {
+        const response = await axios.get('/invoices?status=overdue', {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + localStorage.getItem('token'),
+          },
+          withCredentials: true
+        });
+        setOverdueInvoicesCount(response.data.count);
+      } catch (err) {
+        console.error(err);
+        if (!err?.response) {
+          setErrMsg('No Server Response!');
+        } else if (err.response?.status === 403) {
+          setErrMsg('Oops! You are not authorized to consume this resource.')
+        } else {
+          router.push('/');
+        }
+      }
+    }
+
+    const getDraftInvoices = async () => {
+      try {
+        const response = await axios.get('/invoices?status=draft', {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + localStorage.getItem('token'),
+          },
+          withCredentials: true
+        });
+        setDraftInvoicesCount(response.data.count);
+      } catch (err) {
+        console.error(err);
+        if (!err?.response) {
+          setErrMsg('No Server Response!');
+        } else if (err.response?.status === 403) {
+          setErrMsg('Oops! You are not authorized to consume this resource.')
+        } else {
+          router.push('/');
+        }
+      }
+    }
+
+    getInvoices();
+    getPaidInvoices();
+    getUnpaidInvoices();
+    getOverdueInvoices();
+    getDraftInvoices();
+  }, []);
+
   const PaidIcon = () => (
     <div className={`bg-[#8DED85] rounded-full p-2`}>
       <svg
@@ -247,18 +553,11 @@ const OverDue = () => {
     </div>
   );
   const invoiceData = [
-    { status: "Paid", amount: 1200, icon: <PaidIcon /> }, // Add icon property
-    { status: "Unpaid", amount: 1200, icon: <UnpaidIcon /> },
-    {
-      status: "Overdue",
-      amount: 1200,
-      color: "red-500",
-      icon: <OverdueIcon />,
-    },
-    { status: "Draft", amount: 1200, icon: <DraftIcon /> },
+    { status: "Paid", amount: paidInvoicesCount, icon: <PaidIcon /> },
+    { status: "Unpaid", amount: unpaidInvoicesCount, icon: <UnpaidIcon /> },
+    { status: "Overdue", amount: overdueInvoicesCount, color: "red-500", icon: <OverdueIcon /> },
+    { status: "Draft", amount: draftInvoicesCount, icon: <DraftIcon /> },
   ];
-
-  const [showDropdown, setShowDropdown] = useState(null);
 
   const toggleDropdown = (index) => {
     setShowDropdown(showDropdown === index ? null : index);
@@ -308,7 +607,7 @@ const OverDue = () => {
             <Link href="/settings">
               <button className=" mt-[.6rem] px-4 py-2 rounded hover:bg-gray-700 flex items-center">
                 <div className="w-2 mr-2">
-                  <img src="/set.png" alt="payrol" width={40} />
+                  <img src="/set.png" alt="payroll" width={40} />
                 </div>
                 Settings
               </button>
@@ -364,14 +663,10 @@ const OverDue = () => {
       <div className="text-black bg-white px-9">
         <div className="flex items-center mt-[2rem]">
           <div className="flex items-center mr-[3rem]">
-            <img
-              src="/ava.png"
-              alt="avata"
-              className="w-8 h-8 rounded-full mr-2 bg-black"
-            />
+            <p className="w-8 h-8 rounded-full mr-2 p-1 bg-black text-white text-center">{nameAbbr}</p>
             <div>
-              <p className="font-semibold text-xl">Adam Olah</p>
-              <p className="">adam@kbs.com</p>
+              <p className="font-semibold text-xl">{fullName}</p>
+              <p className="font-small text-xs">{email}</p>
             </div>
           </div>
           <div className="flex items-center ml-[4rem]">
@@ -379,6 +674,7 @@ const OverDue = () => {
               <input
                 type="text"
                 placeholder="Search invoices"
+                onChange={handleInvoiceSearch}
                 className="px-[2rem] py-2 border w-[358px] border-gray-300 rounded-full ml-[1rem] pl-8"
                 style={{
                   backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M19 19L13 13M15 8C15 11.866 11.866 15 8 15C4.13401 15 1 11.866 1 8C1 4.13401 4.13401 1 8 1C11.866 1 15 4.13401 15 8Z" stroke="%23666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>')`,
@@ -389,11 +685,11 @@ const OverDue = () => {
               />
             </div>
             <div className="mr-4">
-              <button className="bg-yellow-400 text-black px-4 py-2 rounded-md mr-2">
+              <Link href="/createInvoice" className="bg-yellow-400 text-black px-4 py-2 rounded-md mr-2">
                 + New Invoice
-              </button>
+              </Link>
             </div>
-            <div className="mr-3">
+            {/* <div className="mr-3">
               <button>
                 <img
                   src="/settingsIcon.png"
@@ -409,11 +705,12 @@ const OverDue = () => {
                 className=" bg-[#8DED85] rounded-full p-[.7rem]"
                 width={40}
               />
-            </button>
+            </button> */}
           </div>
         </div>
         {/* Invoice Overview section */}
         <div className="pt-7 mt-[2rem]">
+          <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
           <h1 className="mb-[1rem] text-2xl">Invoice overview</h1>
           <div className="flex flex-col bg-[#000000] p-4 rounded-md shadow-md mt-2">
             <div className="grid grid-cols-4 gap-4">
@@ -482,12 +779,12 @@ const OverDue = () => {
               Export Invoice
             </button>
             <div className="relative">
-              <select className="appearance-none bg-white px-4 py-3 rounded-md border font-medium border-black text-black text-xs hover:bg-gray-100 transition-colors duration-200 pr-8">
-              <option>All Invoice</option>
-                <option>Overdue Invoice</option>
-                <option>Unpaid Invoice</option>
-                <option>Paid Invoice</option>
-                <option>Draft</option>
+              <select onChange={(event) => handleSelectChangeStatus(event.target.value)} className="appearance-none bg-white px-4 py-3 rounded-md border font-medium border-black text-black text-xs hover:bg-gray-100 transition-colors duration-200 pr-8">
+                <option value="all">All Invoice</option>
+                <option value="overdue">Overdue Invoice</option>
+                <option value="unpaid">Unpaid Invoice</option>
+                <option value="paid">Paid Invoice</option>
+                <option value="draft">Draft</option>
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                 <svg
@@ -500,10 +797,10 @@ const OverDue = () => {
               </div>
             </div>
             <div className="relative">
-              <select className="appearance-none bg-white text-gray-400 border border-gray-400 font-medium px-4 py-2 rounded-md hover:bg-gray-100 transition-colors duration-200 pr-8">
-                <option>Last 30 days</option>
-                <option>Last 60 days</option>
-                <option>Last 90 days</option>
+              <select onChange={(event) => handleSelectChangeDays(event.target.value)} className="appearance-none bg-white text-gray-400 border border-gray-400 font-medium px-4 py-2 rounded-md hover:bg-gray-100 transition-colors duration-200 pr-8">
+                <option value="last30">Last 30 days</option>
+                <option value="last60">Last 60 days</option>
+                <option value="last90">Last 90 days</option>
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                 <svg
@@ -545,169 +842,202 @@ const OverDue = () => {
                     Client
                   </th>
                   <th className="py-2 px-4">Status</th>
-                  <th className="py-2 px-4">Issued Date</th>
+                  <th className="py-2 px-4">Issue Date</th>
                   <th className="py-2 px-4">Due Date</th>
                   <th className="py-2 px-4">Amount</th>
                   <th className="py-2 px-4">Action</th>
                 </tr>
               </thead>
-              <tbody className="">
-                {invoices.map((invoice, index) => (
-                  <tr key={index}>
-                    <td className="py-2 px-4 ml-9">
-                      <div className="flex items-center">
-                        <div className="mr-4 flex">
+              {
+                invoices &&
+                <tbody className="relative">
+                  {invoices.map((invoice, index) => (
+                    <tr key={index}>
+                      <td className="py-2 px-4 ml-9">
+                        <div className="flex items-center">
+                          <div className="mr-4 flex">
+                            <svg
+                              width="16"
+                              className="mr-7"
+                              height="17"
+                              viewBox="0 0 16 17"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <rect
+                                x="0.4"
+                                y="0.9"
+                                width="15.2"
+                                height="15.2"
+                                rx="2.8"
+                                stroke="#949494"
+                                strokeWidth="0.8"
+                              />
+                            </svg>
+                            <svg
+                              width="20"
+                              height="21"
+                              viewBox="0 0 20 21"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M3.12104 16.3037C5.15267 15.1554 7.4998 14.5 10 14.5C12.5002 14.5 14.8473 15.1554 16.879 16.3037M13 8.5C13 10.1569 11.6569 11.5 10 11.5C8.34315 11.5 7 10.1569 7 8.5C7 6.84315 8.34315 5.5 10 5.5C11.6569 5.5 13 6.84315 13 8.5ZM19 10.5C19 15.4706 14.9706 19.5 10 19.5C5.02944 19.5 1 15.4706 1 10.5C1 5.52944 5.02944 1.5 10 1.5C14.9706 1.5 19 5.52944 19 10.5Z"
+                                stroke="#333333"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                          </div>
+                          <div>
+                            <div>{invoice.customerName}</div>
+                            <div className="text-sm text-gray-500">
+                              Invoice ID: #DC40{invoice.id}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+
+                      <td className="py-2 px-7">{invoice.status}</td>
+                      <td className="py-2 px-7">
+                        {new Date(invoice.issueDate).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </td>
+                      <td className="py-2 px-6">
+                        {new Date(invoice.dueDate).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </td>
+                      <td className="py-2 px-6">
+                        &#8358;{(invoice.total).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                      </td>
+                      <td className="py-2 px-[4rem] relative">
+                        <button
+                          className="hover:bg-gray-400 text-gray-800 py-1 px-2 rounded"
+                          onClick={() => toggleDropdown(index)}
+                        >
                           <svg
-                            width="16"
-                            className="mr-7"
-                            height="17"
-                            viewBox="0 0 16 17"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <rect
-                              x="0.4"
-                              y="0.9"
-                              width="15.2"
-                              height="15.2"
-                              rx="2.8"
-                              stroke="#949494"
-                              strokeWidth="0.8"
-                            />
-                          </svg>
-                          <svg
-                            width="20"
-                            height="21"
-                            viewBox="0 0 20 21"
+                            width="4"
+                            height="19"
+                            viewBox="0 0 4 19"
                             fill="none"
                             xmlns="http://www.w3.org/2000/svg"
                           >
                             <path
-                              d="M3.12104 16.3037C5.15267 15.1554 7.4998 14.5 10 14.5C12.5002 14.5 14.8473 15.1554 16.879 16.3037M13 8.5C13 10.1569 11.6569 11.5 10 11.5C8.34315 11.5 7 10.1569 7 8.5C7 6.84315 8.34315 5.5 10 5.5C11.6569 5.5 13 6.84315 13 8.5ZM19 10.5C19 15.4706 14.9706 19.5 10 19.5C5.02944 19.5 1 15.4706 1 10.5C1 5.52944 5.02944 1.5 10 1.5C14.9706 1.5 19 5.52944 19 10.5Z"
+                              d="M2 2.5L2 2.51M2 9.5L2 9.51M2 16.5L2 16.51M2 3.5C1.44772 3.5 1 3.05228 1 2.5C1 1.94772 1.44772 1.5 2 1.5C2.55228 1.5 3 1.94772 3 2.5C3 3.05228 2.55228 3.5 2 3.5ZM2 10.5C1.44771 10.5 1 10.0523 1 9.5C1 8.94772 1.44771 8.5 2 8.5C2.55228 8.5 3 8.94772 3 9.5C3 10.0523 2.55228 10.5 2 10.5ZM2 17.5C1.44771 17.5 0.999999 17.0523 0.999999 16.5C0.999999 15.9477 1.44771 15.5 2 15.5C2.55228 15.5 3 15.9477 3 16.5C3 17.0523 2.55228 17.5 2 17.5Z"
                               stroke="#333333"
                               strokeWidth="2"
                               strokeLinecap="round"
                               strokeLinejoin="round"
                             />
                           </svg>
-                        </div>
-                        <div>
-                          <div>{invoice.client}</div>
-                          <div className="text-sm text-gray-500">
-                            Invoice ID: {invoice.invoiceId}
+                        </button>
+                        {showDropdown === index && (
+                          <div onClick={() => toggleDropdown(index)} className="absolute right-0 mt-2 py-4 px-4 mr-3 bg-white shadow-md rounded-md z-10">
+                            <button onClick={() => changeStatusToPaid(invoice.id)} className="flex w-full gap-1 items-center text-[#8DED85] px-2 text-sm hover:bg-gray-100">
+                              <svg
+                                width="14"
+                                height="13"
+                                viewBox="0 0 14 13"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M6.05878 2.3798H2.67277C1.92475 2.3798 1.31836 2.98619 1.31836 3.73421V11.1834C1.31836 11.9315 1.92475 12.5378 2.67277 12.5378H10.122C10.87 12.5378 11.4764 11.9315 11.4764 11.1834V7.79742M10.5187 1.42209C11.0476 0.893158 11.9052 0.893158 12.4341 1.42209C12.963 1.95102 12.963 2.80858 12.4341 3.33751L6.61979 9.15183H4.70438L4.70437 7.23641L10.5187 1.42209Z"
+                                  stroke="#8DED85"
+                                  strokeWidth="0.677203"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                              </svg>
+                              Paid
+                            </button>
+                            <Link href={`/invoicePreview/${invoice.id}`} className="flex w-full gap-1 items-center text-[#8DED85] px-2 text-sm hover:bg-gray-100">
+                              <svg
+                                width="14"
+                                height="13"
+                                viewBox="0 0 14 13"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M6.05878 2.3798H2.67277C1.92475 2.3798 1.31836 2.98619 1.31836 3.73421V11.1834C1.31836 11.9315 1.92475 12.5378 2.67277 12.5378H10.122C10.87 12.5378 11.4764 11.9315 11.4764 11.1834V7.79742M10.5187 1.42209C11.0476 0.893158 11.9052 0.893158 12.4341 1.42209C12.963 1.95102 12.963 2.80858 12.4341 3.33751L6.61979 9.15183H4.70438L4.70437 7.23641L10.5187 1.42209Z"
+                                  stroke="#8DED85"
+                                  strokeWidth="0.677203"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                              </svg>
+                              Preview
+                            </Link>
+
+                            <button className="flex items-center w-full gap-2 text-[#F5D563] px-2 text-sm hover:bg-gray-100">
+                              <svg
+                                width="13"
+                                height="14"
+                                viewBox="0 0 13 14"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M8.76759 10.5629H12.1536L11.2022 9.61145C10.9442 9.35343 10.7992 9.00347 10.7992 8.63857V6.49966C10.7992 4.73051 9.66853 3.22544 8.09039 2.66765V2.43644C8.09039 1.68842 7.484 1.08203 6.73598 1.08203C5.98797 1.08203 5.38158 1.68842 5.38158 2.43644V2.66765C3.80343 3.22544 2.67277 4.73051 2.67277 6.49966V8.63857C2.67277 9.00347 2.52781 9.35343 2.26978 9.61145L1.31836 10.5629H4.70437M8.76759 10.5629V11.2401C8.76759 12.3621 7.85801 13.2717 6.73598 13.2717C5.61396 13.2717 4.70437 12.3621 4.70437 11.2401V10.5629M8.76759 10.5629H4.70437"
+                                  stroke="#F5D563"
+                                  strokeWidth="0.677203"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                              </svg>
+                              Notify
+                            </button>
+                            <button onClick={() => handleDeleteClick(invoice.id)} className="flex items-center gap-2 w-full px-2 text-sm text-[#FB4545] hover:bg-gray-100">
+                              <svg
+                                width="14"
+                                height="12"
+                                viewBox="0 0 14 12"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M1.99503 3.52717H11.4759M1.99503 3.52717C1.24701 3.52717 0.640625 2.92078 0.640625 2.17277C0.640625 1.42475 1.24701 0.818359 1.99503 0.818359H11.4759C12.2239 0.818359 12.8303 1.42475 12.8303 2.17277C12.8303 2.92078 12.2239 3.52717 11.4759 3.52717M1.99503 3.52717L1.99503 10.2992C1.99503 11.0472 2.60142 11.6536 3.34944 11.6536H10.1215C10.8695 11.6536 11.4759 11.0472 11.4759 10.2992V3.52717M5.38105 6.23598H8.08986"
+                                  stroke="#FB4545"
+                                  strokeWidth="0.677203"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                              </svg>
+                              Delete
+                            </button>
+                            <button onClick={() => downloadInvoice(invoice.id)} className="flex items-center gap-2 w-full text-sm text-[#FFD700] py-1 px-2 hover:bg-gray-100">
+                              <svg
+                                width="13"
+                                height="13"
+                                viewBox="0 0 13 13"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M1.31836 9.00213L1.31836 9.67933C1.31836 10.8014 2.22794 11.7109 3.34997 11.7109L10.122 11.7109C11.244 11.7109 12.1536 10.8014 12.1536 9.67933L12.1536 9.00212M9.4448 6.29331L6.73598 9.00212M6.73598 9.00212L4.02717 6.29331M6.73598 9.00212L6.73598 0.875687"
+                                  stroke="#FFD700"
+                                  strokeWidth="0.677203"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                              </svg>
+                              Download
+                            </button>
                           </div>
-                        </div>
-                      </div>
-                    </td>
-
-                    <td className="py-2 px-7">{invoice.status}</td>
-                    <td className="py-2 px-7">{invoice.issuedDate}</td>
-                    <td className="py-2 px-6">{invoice.dueDate}</td>
-                    <td className="py-2 px-6">
-                      {invoice.amount.toLocaleString()}
-                    </td>
-                    <td className="py-2 px-[4rem] relative">
-                      <button
-                        className="hover:bg-gray-400 text-gray-800 py-1 px-2 rounded"
-                        onClick={() => toggleDropdown(index)}
-                      >
-                        <svg
-                          width="4"
-                          height="19"
-                          viewBox="0 0 4 19"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M2 2.5L2 2.51M2 9.5L2 9.51M2 16.5L2 16.51M2 3.5C1.44772 3.5 1 3.05228 1 2.5C1 1.94772 1.44772 1.5 2 1.5C2.55228 1.5 3 1.94772 3 2.5C3 3.05228 2.55228 3.5 2 3.5ZM2 10.5C1.44771 10.5 1 10.0523 1 9.5C1 8.94772 1.44771 8.5 2 8.5C2.55228 8.5 3 8.94772 3 9.5C3 10.0523 2.55228 10.5 2 10.5ZM2 17.5C1.44771 17.5 0.999999 17.0523 0.999999 16.5C0.999999 15.9477 1.44771 15.5 2 15.5C2.55228 15.5 3 15.9477 3 16.5C3 17.0523 2.55228 17.5 2 17.5Z"
-                            stroke="#333333"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      </button>
-                      {showDropdown === index && (
-                        <div className="absolute right-0 mt-2 py-4 px-4 mr-3 bg-white shadow-md rounded-md z-10">
-                          <button className="flex w-full gap-1 items-center text-[#8DED85] px-2 text-sm hover:bg-gray-100">
-                            <svg
-                              width="14"
-                              height="13"
-                              viewBox="0 0 14 13"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M6.05878 2.3798H2.67277C1.92475 2.3798 1.31836 2.98619 1.31836 3.73421V11.1834C1.31836 11.9315 1.92475 12.5378 2.67277 12.5378H10.122C10.87 12.5378 11.4764 11.9315 11.4764 11.1834V7.79742M10.5187 1.42209C11.0476 0.893158 11.9052 0.893158 12.4341 1.42209C12.963 1.95102 12.963 2.80858 12.4341 3.33751L6.61979 9.15183H4.70438L4.70437 7.23641L10.5187 1.42209Z"
-                                stroke="#8DED85"
-                                strokeWidth="0.677203"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </svg>
-                            Edit/Resend
-                          </button>
-
-                          <button className="flex items-center w-full gap-2 text-[#F5D563] px-2 text-sm hover:bg-gray-100">
-                            <svg
-                              width="13"
-                              height="14"
-                              viewBox="0 0 13 14"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M8.76759 10.5629H12.1536L11.2022 9.61145C10.9442 9.35343 10.7992 9.00347 10.7992 8.63857V6.49966C10.7992 4.73051 9.66853 3.22544 8.09039 2.66765V2.43644C8.09039 1.68842 7.484 1.08203 6.73598 1.08203C5.98797 1.08203 5.38158 1.68842 5.38158 2.43644V2.66765C3.80343 3.22544 2.67277 4.73051 2.67277 6.49966V8.63857C2.67277 9.00347 2.52781 9.35343 2.26978 9.61145L1.31836 10.5629H4.70437M8.76759 10.5629V11.2401C8.76759 12.3621 7.85801 13.2717 6.73598 13.2717C5.61396 13.2717 4.70437 12.3621 4.70437 11.2401V10.5629M8.76759 10.5629H4.70437"
-                                stroke="#F5D563"
-                                strokeWidth="0.677203"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </svg>
-                            Notify
-                          </button>
-                          <button className="flex items-center gap-2 w-full px-2 text-sm text-[#FB4545] hover:bg-gray-100">
-                            <svg
-                              width="14"
-                              height="12"
-                              viewBox="0 0 14 12"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M1.99503 3.52717H11.4759M1.99503 3.52717C1.24701 3.52717 0.640625 2.92078 0.640625 2.17277C0.640625 1.42475 1.24701 0.818359 1.99503 0.818359H11.4759C12.2239 0.818359 12.8303 1.42475 12.8303 2.17277C12.8303 2.92078 12.2239 3.52717 11.4759 3.52717M1.99503 3.52717L1.99503 10.2992C1.99503 11.0472 2.60142 11.6536 3.34944 11.6536H10.1215C10.8695 11.6536 11.4759 11.0472 11.4759 10.2992V3.52717M5.38105 6.23598H8.08986"
-                                stroke="#FB4545"
-                                strokeWidth="0.677203"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </svg>
-                            Delete
-                          </button>
-                          <button className="flex items-center gap-2 w-full text-sm text-[#FFD700] py-1 px-2 hover:bg-gray-100">
-                            <svg
-                              width="13"
-                              height="13"
-                              viewBox="0 0 13 13"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M1.31836 9.00213L1.31836 9.67933C1.31836 10.8014 2.22794 11.7109 3.34997 11.7109L10.122 11.7109C11.244 11.7109 12.1536 10.8014 12.1536 9.67933L12.1536 9.00212M9.4448 6.29331L6.73598 9.00212M6.73598 9.00212L4.02717 6.29331M6.73598 9.00212L6.73598 0.875687"
-                                stroke="#FFD700"
-                                strokeWidth="0.677203"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </svg>
-                            Download
-                          </button>
-                        </div>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              }
             </table>
           </div>
         </div>

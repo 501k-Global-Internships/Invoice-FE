@@ -1,7 +1,59 @@
-import React from 'react';
+"use client";
+import React, { useRef, useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation'
+import axios from './api/axios';
 
 const LoginForm = () => {
+  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [errMsg, setErrMsg] = useState('');
+
+  const router = useRouter();
+
+  const errRef = useRef();
+  const LOGIN_URL = '/sign-in';
+
+  useEffect(() => {
+    setErrMsg('');
+  }, [email, password]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const payload = { email, password }
+    try {
+      const response = await axios.post(LOGIN_URL,
+        JSON.stringify(payload),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          withCredentials: true
+        }
+      );
+      localStorage.setItem('token', response?.data?.token);
+      localStorage.setItem('name', response?.data?.name);
+      localStorage.setItem('kbsEmail', response?.data?.email);
+
+      router.push('/allInvoices');
+    } catch (err) {
+      if (!err?.response) {
+        console.log(err);
+        setErrMsg('Server Not Responding!');
+      } else if (err.response?.status === 400) {
+        setErrMsg('Oops! Something went wrong. Invalid Email or Password.');
+      } else if (err.response?.status === 401) {
+        setErrMsg('Unauthorized! Invalid Email or Password.');
+      }  else if (err.response?.status === 404) {
+        setErrMsg('We do not have a user with this email. Please sign up.');
+      } else {
+        setErrMsg('Login Failed!');
+      }
+      errRef.current.focus();
+    }
+  }
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <h2 className="text-3xl font-bold text-center">Welcome to</h2>
@@ -10,12 +62,14 @@ const LoginForm = () => {
         Login to your account to continue
       </h2>
       <h2 className='font-medium mb-7 text-center'>where you left off</h2>
+      <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
       <div className="w-full max-w-md bg-[#565656] rounded-t-lg shadow-md px-11 py-11">
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <input
               type="email"
               id="email"
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter email address"
             />
@@ -24,6 +78,7 @@ const LoginForm = () => {
             <input
               type="password"
               id="password"
+              onChange={(e) => setPassword(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
               placeholder="Password"
             />
@@ -58,7 +113,7 @@ const LoginForm = () => {
               Forgot your password?
             </Link>
           </div>
-          <Link href='#'
+          <button
             type="submit"
             className="flex items-center justify-center gap-2 w-full py-2 px-4 bg-[#FFD700] font-medium rounded-md hover:bg-[#e4c93e] transition-colors duration-300 mb-4"
           >
@@ -78,9 +133,9 @@ const LoginForm = () => {
                 stroke-linejoin="round"
               />
             </svg>
-          </Link>
+          </button>
           <div className="flex justify-between items-center">
-          <div className="flex items-center">
+            <div className="flex items-center">
               <input
                 type="checkbox"
                 id="rememberMe"
@@ -93,7 +148,7 @@ const LoginForm = () => {
             <p className="text-[#FAFAFA]">
               New User?
               <Link href="/signUp" className="text-[#FAFAFA] hover:text-gray-300">
-                 <span> Sign up</span> 
+                <span> Sign up</span>
               </Link>
             </p>
           </div>

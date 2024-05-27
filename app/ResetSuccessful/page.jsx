@@ -1,7 +1,6 @@
 import Link from "next/link";
 
-
-function ResetSuccessfull() {
+function ResetSuccessful() {
     return (
       <div className="flex flex-col items-center justify-center h-screen">
         <div className="p-[20px] bg-[#FFD700] rounded-full">
@@ -30,5 +29,5 @@ function ResetSuccessfull() {
     );
   }
   
-  export default ResetSuccessfull;
+  export default ResetSuccessful;
   

@@ -19,7 +19,7 @@ const ResetPassword = () => {
               placeholder="Enter email address"
             />
           </div>
-          <Link href='/resetSuccessfull'
+          <Link href='/resetSuccessful'
             className="flex items-center justify-center gap-2 w-full py-2 px-4 bg-[#FFD700] font-medium rounded-md hover:bg-[#e4c93e] transition-colors duration-300 mb-4"
           >
             Reset password

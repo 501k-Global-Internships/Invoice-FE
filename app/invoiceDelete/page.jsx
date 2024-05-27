@@ -1,6 +1,14 @@
+'use client'
 import React from "react";
+import { useRouter } from 'next/navigation'
 
 function InvoiceDeleted() {
+  const router = useRouter();
+
+  const Continue = () => {
+    router.push('/allInvoices')
+  }
+
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <div className="rounded-full p-4">
@@ -14,7 +22,7 @@ function InvoiceDeleted() {
       </div>
       <p className="text-2xl font-bold mt-4">Invoice deleted </p>
       <p className="font-bold text-2xl">successfully! </p>
-      <button className="mt-8 flex px-[6rem] py-2 bg-yellow-400 text-black rounded hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white">
+      <button onClick={Continue} className="mt-8 flex px-[6rem] py-2 bg-yellow-400 text-black rounded hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white">
         Continue <img src="/arrow.png" alt="arrow" className="mt-[.6rem] ml-[.6rem] w-3" />
       </button>
     </div>

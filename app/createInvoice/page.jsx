@@ -1,8 +1,11 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Dropzone from "react-dropzone";
+import { useRouter } from 'next/navigation'
 import Link from "next/link";
-const InvoiceForm = () => {
+import axios from "../api/axios";
+
+const createInvoice = () => {
   // Define the state for storing the dropped image file
   const [imageFile, setImageFile] = useState(null);
   // Define the onDrop function to handle file drops
@@ -12,15 +15,140 @@ const InvoiceForm = () => {
   };
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
+  const [customerName, setCustomerName] = useState("");
+
   const [billingAddress, setBillingAddress] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    // Implement form validation and submission logic here
-    // (e.g., send data to an API route)
+  const [customerEmail, setCustomerEmail] = useState("");
+
+  const [invoiceTitle, setInvoiceTitle] = useState("")
+  const [paymentCurrency, setPaymentCurrency] = useState("");
+  const [additionalInfo, setAdditionalInfo] = useState("");
+
+  const [accountName, setAccountName] = useState("");
+  const [accountNumber, setAccountNumber] = useState("");
+  const [bankName, setBankName] = useState("");
+
+  const [issueDate, setIssueDate] = useState("");
+  const [dueDate, setDueDate] = useState("");
+  const [discount, setDiscount] = useState("");
+
+  const [tax, setTax] = useState("");
+  const [subTotal, setSubTotal] = useState(0);
+  const total = ((subTotal - discount) + tax);
+
+  const [errMsg, setErrMsg] = useState('');
+  const errRef = useRef();
+  const router = useRouter();
+
+  const [items, setItems] = useState([
+    { itemDescription: '', quantity: '', price: '', amount: '' },
+  ]);
+
+  const handleAddItem = () => {
+    setItems([...items, { itemDescription: '', quantity: '', price: '', amount: '' }]);
   };
-  //  invoice summary
+
+  const handleItemsInputChange = (index, event) => {
+    const { id, value } = event.target;
+    const newItems = [...items];
+    newItems[index][id] = value;
+
+    // Calculate the amount if quantity or price changes
+    if (id === 'quantity' || id === 'price') {
+      const quantity = newItems[index].quantity ? parseFloat(newItems[index].quantity) : 0;
+      const price = newItems[index].price ? parseFloat(newItems[index].price) : 0;
+      newItems[index].amount = quantity * price;
+    }
+
+    setItems(newItems);
+  };
+
+  const handleDiscountChange = (e) => {
+    const value = e.target.value;
+    const calculatedDiscount = (parseFloat(value) * (subTotal / 100)).toString();
+    setDiscount(calculatedDiscount);
+  };
+
+  const handleTaxChange = (e) => {
+    const value = e.target.value;
+    const calculatedTax = (parseFloat(value) * (subTotal / 100)).toString();
+    setTax(calculatedTax);
+  };
+
+  useEffect(() => {
+    const total = items.reduce((sum, item) => sum + item.amount, 0);
+    setSubTotal(total);
+  }, [items]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const payload = {
+      items, name, email, customerName, billingAddress, phoneNumber, customerEmail,
+      invoiceTitle, paymentCurrency, additionalInfo, accountName, accountNumber,
+      bankName, issueDate, dueDate, discount, tax,
+    }
+
+    try {
+      const response = await axios.post('/create-invoice',
+        payload, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + localStorage.getItem('token'),
+        },
+        withCredentials: true
+      }
+      );
+      console.log(JSON.stringify(response?.data));
+      router.push('/allInvoices');
+    } catch (err) {
+      if (!err?.response) {
+        setErrMsg('No Server Response!');
+      } else if (err.response?.status === 400) {
+        setErrMsg('Oops! Bad request. Check the fields and try again.');
+      } else if (err.response?.status === 401) {
+        setErrMsg('Oops! You are not authorized to consume this resource.')
+      } else {
+        setErrMsg('Failed!')
+      }
+      errRef.current.focus();
+    }
+  };
+
+  const draftInvoice = async (e) => {
+    e.preventDefault();
+    const payload = {
+      items, name, email, customerName, billingAddress, phoneNumber, customerEmail,
+      invoiceTitle, paymentCurrency, additionalInfo, accountName, accountNumber,
+      bankName, issueDate, dueDate, discount, tax,
+    }
+
+    try {
+      const response = await axios.post('/draft-invoice',
+        payload, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + localStorage.getItem('token'),
+        },
+        withCredentials: true
+      }
+      );
+      console.log(JSON.stringify(response?.data));
+      router.push('/allInvoices');
+    } catch (err) {
+      if (!err?.response) {
+        setErrMsg('No Server Response!');
+      } else if (err.response?.status === 400) {
+        setErrMsg('Oops! Bad request. Check the fields and try again.');
+      } else if (err.response?.status === 401) {
+        setErrMsg('Oops! You are not authorized to consume this resource.')
+      } else {
+        setErrMsg('Failed!')
+      }
+      errRef.current.focus();
+    }
+  };
+
   return (
     <div className="flex w-full">
       {/* paid invoice section */}
@@ -89,24 +217,25 @@ const InvoiceForm = () => {
       </div>
       {/* Invoice form section */}
       <div className="flex flex-col mt-[11rem] ml-[2rem] w-[75rem]">
+        <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
         <div className="mb-4">
-        <Link href='/' className="flex gap-2 items-center text-2xl">
-          <svg
-            width="20"
-            height="16"
-            viewBox="0 0 20 16"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M8 15L1 8M1 8L8 1M1 8L19 8"
-              stroke="#111827"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-          Create new invoice
+          <Link href='/allInvoices' className="flex gap-2 items-center text-2xl">
+            <svg
+              width="20"
+              height="16"
+              viewBox="0 0 20 16"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M8 15L1 8M1 8L8 1M1 8L19 8"
+                stroke="#111827"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            Create new invoice
           </Link>
         </div>
         <div className="flex justify-between mb-7">
@@ -218,7 +347,7 @@ const InvoiceForm = () => {
             />
           </form>
         </div>
-        {/* Custors Information */}
+        {/* Customer's Information */}
         <div className="mt-[3rem]">
           <div className="mb-[1.2rem]">
             <h1 className="text-xl">Your Customer's Information</h1>
@@ -235,9 +364,9 @@ const InvoiceForm = () => {
               type="text"
               id="email"
               name="email"
-              placeholder="email@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              placeholder="enter customer name..."
+              value={customerName}
+              onChange={(e) => setCustomerName(e.target.value)}
               className=" rounded p-2 w-[38rem] ml-5 border-2 focus:outline-none"
             />
             <label htmlFor="billingAddress" className="ml-5 mt-3">
@@ -308,8 +437,8 @@ const InvoiceForm = () => {
                 id="email"
                 name="email"
                 placeholder="e.g leronaldio@gmail.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={customerEmail}
+                onChange={(e) => setCustomerEmail(e.target.value)}
                 className="focus:outline-none"
               />
             </div>
@@ -328,6 +457,8 @@ const InvoiceForm = () => {
             <input
               type="text"
               id="invoiceTitle"
+              value={invoiceTitle}
+              onChange={(e) => setInvoiceTitle(e.target.value)}
               className="shadow appearance-none w-[34rem] border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               placeholder="e.g Payment for 2 units of Dell E7240 laptops"
             />
@@ -337,64 +468,80 @@ const InvoiceForm = () => {
               Payment currency
             </label>
             <select
+              value={paymentCurrency}
+              onChange={(e) => setPaymentCurrency(e.target.value)}
               id="paymentCurrency"
               className="shadow appearance-none border rounded w-[34rem] py-2 px-3 text-gray-400 leading-tight focus:outline-none focus:shadow-outline"
             >
-              <option className="text-gray-600">e.g US Dollar</option>
-              <option className="text-gray-600">e.g US Dollar</option>
+              <option value="">Select...</option>
+              <option value="NGN" className="text-gray-600">NGN</option>
+              <option value="USD" className="text-gray-600">USD</option>
+              <option value="EUR" className="text-gray-600">EUR</option>
+              <option value="GBP" className="text-gray-600">GBP</option>
             </select>
           </div>
-          <div className="flex mb-4">
-            <div className="mr-4 flex-1">
-              <label
-                htmlFor="itemDescription"
-                className="block text-black mb-2"
-              >
-                Item Description
-              </label>
-              <input
-                type="text"
-                id="itemDescription"
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                placeholder="e.g US Dollar"
-              />
+          {items.map((item, index) => (
+            <div className="flex mb-4" key={index}>
+              <div className="mr-4 flex-1">
+                <label htmlFor="itemDescription" className="block text-black mb-2">
+                  Item Description
+                </label>
+                <input
+                  type="text"
+                  id="itemDescription"
+                  value={item.itemDescription}
+                  onChange={(e) => handleItemsInputChange(index, e)}
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  placeholder="e.g US Dollar"
+                />
+              </div>
+              <div className="mr-4 flex-1">
+                <label htmlFor="qty" className="block text-black mb-2">
+                  Qty
+                </label>
+                <input
+                  type="text"
+                  id="quantity"
+                  value={item.quantity}
+                  onChange={(e) => handleItemsInputChange(index, e)}
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  placeholder="e.g 5"
+                />
+              </div>
+              <div className="mr-4 flex-1">
+                <label htmlFor="price" className="block text-black mb-2">
+                  Price
+                </label>
+                <input
+                  type="text"
+                  id="price"
+                  value={item.price}
+                  onChange={(e) => handleItemsInputChange(index, e)}
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  placeholder="e.g 50"
+                />
+              </div>
+              <div className="flex-1">
+                <label htmlFor="amount" className="block text-black mb-2">
+                  Amount
+                </label>
+                <input
+                  type="text"
+                  id="amount"
+                  value={item.amount}
+                  readOnly
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200"
+                  placeholder="Amount"
+                />
+              </div>
             </div>
-            <div className="mr-4 flex-1">
-              <label htmlFor="qty" className="block text-text-black mb-2">
-                Qty
-              </label>
-              <input
-                type="text"
-                id="qty"
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                placeholder="e.g US Dollar"
-              />
-            </div>
-            <div className="mr-4 flex-1">
-              <label htmlFor="price" className="block text-black mb-2">
-                Price
-              </label>
-              <input
-                type="text"
-                id="price"
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                placeholder="e.g US Dollar"
-              />
-            </div>
-            <div className="flex-1">
-              <label htmlFor="amount" className="block text-text-black mb-2">
-                Amount
-              </label>
-              <input
-                type="text"
-                id="amount"
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                placeholder="e.g US Dollar"
-              />
-            </div>
-          </div>
+          ))}
           <div className="mb-4">
-            <button className=" hover:bg-gray-200 text-black  py-2 px-4 rounded">
+            <button
+              type="button"
+              className="hover:bg-gray-200 text-black py-2 px-4 rounded"
+              onClick={handleAddItem}
+            >
               + Add item
             </button>
           </div>
@@ -404,6 +551,8 @@ const InvoiceForm = () => {
             </label>
             <textarea
               id="additionalInfo"
+              value={additionalInfo}
+              onChange={(e) => setAdditionalInfo(e.target.value)}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               placeholder="e.g Suite 10, Admiralty Way, Victoria Island, Lagos State, Nigeria"
             ></textarea>
@@ -421,6 +570,8 @@ const InvoiceForm = () => {
                 <input
                   type="text"
                   id="accountName"
+                  value={accountName}
+                  onChange={(e) => setAccountName(e.target.value)}
                   className="shadow appearance-none border rounded w-[13rem] py-2 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ml-3"
                   placeholder="e.g KBM Enterprise"
                 />
@@ -435,6 +586,8 @@ const InvoiceForm = () => {
                 <input
                   type="text"
                   id="accountNumber"
+                  value={accountNumber}
+                  onChange={(e) => setAccountNumber(e.target.value)}
                   className="shadow appearance-none border rounded w-[13rem] py-2 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ml-2"
                   placeholder="e.g KBM Enterprise"
                 />
@@ -446,6 +599,8 @@ const InvoiceForm = () => {
                 <input
                   type="text"
                   id="bankName"
+                  value={bankName}
+                  onChange={(e) => setBankName(e.target.value)}
                   className="shadow appearance-none border rounded w-[13rem] py-2 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ml-3"
                   placeholder="e.g KBM Enterprise"
                 />
@@ -460,7 +615,9 @@ const InvoiceForm = () => {
               </label>
               <input
                 type="date"
-                id="issuedDate"
+                id="issueDate"
+                value={issueDate}
+                onChange={(e) => setIssueDate(e.target.value)}
                 className="appearance-none border-gray-300 border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 defaultValue="2024-03-12"
               />
@@ -472,6 +629,8 @@ const InvoiceForm = () => {
               <input
                 type="date"
                 id="dueDate"
+                value={dueDate}
+                onChange={(e) => setDueDate(e.target.value)}
                 className="border-gray-300 appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 defaultValue="2024-03-12"
               />
@@ -483,8 +642,11 @@ const InvoiceForm = () => {
           <div className="flex justify-between mr-[.9rem]">
             <h2 className="text-xl text-black mb-4">Invoice summary</h2>
             <div className="">
-              <span className="mr-[6.7rem]">Sub-total:</span>
-              <span>$400.00</span>
+              <div className="flex items-center">
+                <span className="mr-1">Sub-total:</span>
+                <span>{subTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</span>
+                <span className="ml-1">{paymentCurrency}</span>
+              </div>
             </div>
           </div>
           <hr className="mb-4" />
@@ -495,14 +657,17 @@ const InvoiceForm = () => {
             <input
               type="text"
               id="discount"
+              onChange={handleDiscountChange}
               placeholder="%"
               className="w-[8.6rem] mr-[2rem] border border-gray-300 text-end rounded-md px-2 py-1 focus:outline-none"
             />
             <input
               type="text"
               id="discount"
-              placeholder=""
-              className="border shadow-2xl rounded-md px-2 py-1 w-[8.6rem] focus:outline-none"
+              placeholder="discount"
+              readOnly
+              value={discount}
+              className="bg-gray-200 border shadow-2xl rounded-md px-2 py-1 w-[8.6rem] focus:outline-none"
             />
           </div>
           <div className="flex justify-end mb-4 mr-[.9rem]">
@@ -513,28 +678,32 @@ const InvoiceForm = () => {
               type="text"
               id="tax"
               placeholder="%"
+              onChange={handleTaxChange}
               className="w-[8.6rem] mr-[2rem] border border-gray-300 text-end rounded-md px-2 py-1 focus:outline-none"
             />
             <input
               type="text"
               id="discount"
-              placeholder=""
-              className="w-[8.6rem] border rounded-md px-2 py-1 focus:outline-none"
+              placeholder="tax"
+              readOnly
+              value={tax}
+              className="bg-gray-200 w-[8.6rem] border rounded-md px-2 py-1 focus:outline-none"
             />
           </div>
           <hr className="mt-[1.3rem] mb-[1.3rem]" />
           <div className="flex justify-end text-black mr-[.9rem]">
-            <div className="mr-[6.6rem]">
-              <span>Total:</span>
+            <div className="flex items-center">
+              <span className="mr-1">Total:</span>
+              <span>{total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</span>
+              <span className="ml-1">{paymentCurrency}</span>
             </div>
-            <span>$400.00</span>
           </div>
         </div>
         <div className="flex justify-between mt-[3rem] mb-[2rem]">
-          <button className="bg-white hover:bg-gray-400 text-black border-black border py-2 px-4 rounded-sm mr-2">
+          <button onClick={draftInvoice} className="bg-white hover:bg-gray-400 text-black border-black border py-2 px-4 rounded-sm mr-2">
             Save as draft
           </button>
-          <Link href='/invoicePreview' className="flex gap-2 bg-[#FFD700] hover:bg-gray-300 text-black py-2 px-4 rounded-sm">
+          <button onClick={handleSubmit} className="flex gap-2 bg-[#FFD700] hover:bg-gray-300 text-black py-2 px-4 rounded-sm">
             Proceed to review
             <div className="mt-[.6rem]">
               <svg
@@ -553,11 +722,11 @@ const InvoiceForm = () => {
                 />
               </svg>
             </div>
-          </Link>
+          </button>
         </div>
       </div>
     </div>
   );
 };
 
-export default InvoiceForm;
+export default createInvoice;
