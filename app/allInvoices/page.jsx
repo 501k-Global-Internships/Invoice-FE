@@ -1,31 +1,49 @@
 "use client";
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation";
 import axios from "../api/axios";
+// import CustomCheckbox from "../customCheckbox";
 
 const OverDue = () => {
   const [invoices, setInvoices] = useState([]);
   const [showDropdown, setShowDropdown] = useState(null);
+  const [selectedClients, setSelectedClients] = useState([]);
 
-  const [paidInvoicesCount, setPaidInvoicesCount] = useState('')
-  const [unpaidInvoicesCount, setUnpaidInvoicesCount] = useState('')
-  const [overdueInvoicesCount, setOverdueInvoicesCount] = useState('')
-  const [draftInvoicesCount, setDraftInvoicesCount] = useState('')
+  const handleSelectAllClients = (checked) => {
+    if (checked) {
+      setSelectedClients(invoices.map((invoice) => invoice.id));
+    } else {
+      setSelectedClients([]);
+    }
+  };
+
+  const handleClientCheckbox = (checked, clientId) => {
+    if (checked) {
+      setSelectedClients([...selectedClients, clientId]);
+    } else {
+      setSelectedClients(selectedClients.filter((id) => id !== clientId));
+    }
+  };
+
+  const [paidInvoicesCount, setPaidInvoicesCount] = useState("");
+  const [unpaidInvoicesCount, setUnpaidInvoicesCount] = useState("");
+  const [overdueInvoicesCount, setOverdueInvoicesCount] = useState("");
+  const [draftInvoicesCount, setDraftInvoicesCount] = useState("");
 
   const errRef = useRef();
-  const [errMsg, setErrMsg] = useState('');
+  const [errMsg, setErrMsg] = useState("");
   const router = useRouter();
 
-  const [email, setEmail] = useState('');
-  const [fullName, setFullName] = useState('');
-  const [nameAbbr, setNameAbbr] = useState('')
+  const [email, setEmail] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [nameAbbr, setNameAbbr] = useState("");
 
   useEffect(() => {
-    const email = localStorage.getItem('kbsEmail');
-    const fullName = localStorage.getItem('name');
+    const email = localStorage.getItem("kbsEmail");
+    const fullName = localStorage.getItem("name");
     if (fullName) {
-      const lastName = fullName.split(' ')[1];
+      const lastName = fullName.split(" ")[1];
       const nameAbbr = `${fullName.charAt(0)}${lastName.charAt(0)}`;
       setNameAbbr(nameAbbr);
     }
@@ -35,302 +53,324 @@ const OverDue = () => {
 
   const getInvoices = async () => {
     try {
-      const response = await axios.get('/invoices', {
+      const response = await axios.get("/invoices", {
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + localStorage.getItem('token'),
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
         },
-        withCredentials: true
+        withCredentials: true,
       });
       setInvoices(response.data.invoices);
       console.log(invoices);
     } catch (err) {
       console.error(err);
       if (!err?.response) {
-        setErrMsg('No Server Response!');
+        setErrMsg("No Server Response!");
       } else if (err.response?.status === 403) {
-        setErrMsg('Oops! You are not authorized to consume this resource.')
+        setErrMsg("Oops! You are not authorized to consume this resource.");
       } else {
-        router.push('/');
+        router.push("/");
       }
     }
-  }
+  };
+
+  const handleCheckboxChange = (invoiceId, checked) => {
+    if (checked) {
+      setCheckedInvoices([...checkedInvoices, invoiceId]);
+    } else {
+      setCheckedInvoices(checkedInvoices.filter((id) => id !== invoiceId));
+    }
+  };
+  const handleSelectAllCheckboxChange = (checked) => {
+    setSelectAllInvoices(checked);
+    if (checked) {
+      setCheckedInvoices(invoices.map((invoice) => invoice.id));
+    } else {
+      setCheckedInvoices([]);
+    }
+  };
 
   const getPaidInvoices = async () => {
     try {
-      const response = await axios.get('/invoices?status=paid', {
+      const response = await axios.get("/invoices?status=paid", {
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + localStorage.getItem('token'),
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
         },
-        withCredentials: true
+        withCredentials: true,
       });
       setInvoices(response.data.invoices);
     } catch (err) {
       console.error(err);
       if (!err?.response) {
-        setErrMsg('No Server Response!');
+        setErrMsg("No Server Response!");
       } else if (err.response?.status === 403) {
-        setErrMsg('Oops! You are not authorized to consume this resource.')
+        setErrMsg("Oops! You are not authorized to consume this resource.");
       } else {
-        router.push('/');
+        router.push("/");
       }
     }
-  }
+  };
 
   const getUnpaidInvoices = async () => {
     try {
-      const response = await axios.get('/invoices?status=unpaid', {
+      const response = await axios.get("/invoices?status=unpaid", {
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + localStorage.getItem('token'),
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
         },
-        withCredentials: true
+        withCredentials: true,
       });
       setInvoices(response.data.invoices);
     } catch (err) {
       console.error(err);
       if (!err?.response) {
-        setErrMsg('No Server Response!');
+        setErrMsg("No Server Response!");
       } else if (err.response?.status === 403) {
-        setErrMsg('Oops! You are not authorized to consume this resource.')
+        setErrMsg("Oops! You are not authorized to consume this resource.");
       } else {
-        router.push('/');
+        router.push("/");
       }
     }
-  }
+  };
 
   const getOverdueInvoices = async () => {
     try {
-      const response = await axios.get('/invoices?status=overdue', {
+      const response = await axios.get("/invoices?status=overdue", {
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + localStorage.getItem('token'),
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
         },
-        withCredentials: true
+        withCredentials: true,
       });
       setInvoices(response.data.invoices);
     } catch (err) {
       console.error(err);
       if (!err?.response) {
-        setErrMsg('No Server Response!');
+        setErrMsg("No Server Response!");
       } else if (err.response?.status === 403) {
-        setErrMsg('Oops! You are not authorized to consume this resource.')
+        setErrMsg("Oops! You are not authorized to consume this resource.");
       } else {
-        router.push('/');
+        router.push("/");
       }
     }
-  }
+  };
 
   const getDraftInvoices = async () => {
     try {
-      const response = await axios.get('/invoices?status=draft', {
+      const response = await axios.get("/invoices?status=draft", {
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + localStorage.getItem('token'),
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
         },
-        withCredentials: true
+        withCredentials: true,
       });
       setInvoices(response.data.invoices);
     } catch (err) {
       console.error(err);
       if (!err?.response) {
-        setErrMsg('No Server Response!');
+        setErrMsg("No Server Response!");
       } else if (err.response?.status === 403) {
-        setErrMsg('Oops! You are not authorized to consume this resource.')
+        setErrMsg("Oops! You are not authorized to consume this resource.");
       } else {
-        router.push('/');
+        router.push("/");
       }
     }
-  }
+  };
 
   const getThirtyDaysInvoices = async () => {
     try {
-      const response = await axios.get('/invoices?dateFilter=last30', {
+      const response = await axios.get("/invoices?dateFilter=last30", {
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + localStorage.getItem('token'),
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
         },
-        withCredentials: true
+        withCredentials: true,
       });
       setInvoices(response.data.invoices);
     } catch (err) {
       console.error(err);
       if (!err?.response) {
-        setErrMsg('No Server Response!');
+        setErrMsg("No Server Response!");
       } else if (err.response?.status === 403) {
-        setErrMsg('Oops! You are not authorized to consume this resource.')
+        setErrMsg("Oops! You are not authorized to consume this resource.");
       } else {
-        router.push('/');
+        router.push("/");
       }
     }
-  }
+  };
   const getSixtyDaysInvoices = async () => {
     try {
-      const response = await axios.get('/invoices?dateFilter=last60', {
+      const response = await axios.get("/invoices?dateFilter=last60", {
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + localStorage.getItem('token'),
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
         },
-        withCredentials: true
+        withCredentials: true,
       });
       setInvoices(response.data.invoices);
     } catch (err) {
       console.error(err);
       if (!err?.response) {
-        setErrMsg('No Server Response!');
+        setErrMsg("No Server Response!");
       } else if (err.response?.status === 403) {
-        setErrMsg('Oops! You are not authorized to consume this resource.')
+        setErrMsg("Oops! You are not authorized to consume this resource.");
       } else {
-        router.push('/');
+        router.push("/");
       }
     }
-  }
+  };
   const getNinetyDaysInvoices = async () => {
     try {
-      const response = await axios.get('/invoices?dateFilter=last90', {
+      const response = await axios.get("/invoices?dateFilter=last90", {
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + localStorage.getItem('token'),
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
         },
-        withCredentials: true
+        withCredentials: true,
       });
       setInvoices(response.data.invoices);
     } catch (err) {
       console.error(err);
       if (!err?.response) {
-        setErrMsg('No Server Response!');
+        setErrMsg("No Server Response!");
       } else if (err.response?.status === 403) {
-        setErrMsg('Oops! You are not authorized to consume this resource.')
+        setErrMsg("Oops! You are not authorized to consume this resource.");
       } else {
-        router.push('/');
+        router.push("/");
       }
     }
-  }
+  };
 
   const changeStatusToPaid = async (id) => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) {
-        console.error('No token found in localStorage');
-        router.push('/');
+        console.error("No token found in localStorage");
+        router.push("/");
         return;
       }
 
-      const response = await axios.patch(`/update-invoice-status/${id}`, {}, {
+      const response = await axios.patch(
+        `/update-invoice-status/${id}`,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
+
+      console.log(response.data);
+      setInvoices((prevInvoices) =>
+        prevInvoices.map((invoice) =>
+          invoice.id === id ? { ...invoice, status: "paid" } : invoice
+        )
+      );
+    } catch (err) {
+      console.error("Error:", err);
+      if (err.response) {
+        console.error("Response data:", err.response.data);
+        console.error("Response status:", err.response.status);
+        console.error("Response headers:", err.response.headers);
+      }
+      router.push("/");
+    }
+  };
+
+  const handleDeleteClick = async (id) => {
+    try {
+      const response = await axios.delete(`/delete-invoice/${id}`, {
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
         },
         withCredentials: true,
       });
 
       console.log(response.data);
       setInvoices((prevInvoices) =>
-        prevInvoices.map((invoice) =>
-          invoice.id === id ? { ...invoice, status: 'paid' } : invoice
-        )
+        prevInvoices.filter((invoice) => invoice.id !== id)
       );
-    } catch (err) {
-      console.error('Error:', err);
-      if (err.response) {
-        console.error('Response data:', err.response.data);
-        console.error('Response status:', err.response.status);
-        console.error('Response headers:', err.response.headers);
-      }
-      router.push('/');
-    }
-  }
-
-  const handleDeleteClick = async (id) => {
-    try {
-      const response = await axios.delete(`/delete-invoice/${id}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + localStorage.getItem('token'),
-        },
-        withCredentials: true
-      });
-
-      console.log(response.data);
-      setInvoices((prevInvoices) => prevInvoices.filter(invoice => invoice.id !== id));
-      router.push('/invoiceDelete');
+      router.push("/invoiceDelete");
     } catch (err) {
       console.error(err);
-      router.push('/');
+      router.push("/");
     }
-  }
+  };
 
   const downloadInvoice = async (id) => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       const response = await axios.get(`/download-invoice/${id}`, {
-        responseType: 'blob', // Important to handle binary data
+        responseType: "blob", // Important to handle binary data
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
-  
+
       // Create a URL for the blob
       const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
-  
+
       // Set the download attribute with a dynamic file name
-      link.setAttribute('download', `invoice_${id}.pdf`); // Set the file name
-  
+      link.setAttribute("download", `invoice_${id}.pdf`); // Set the file name
+
       // Append the link to the document, click it, and remove it
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     } catch (error) {
-      console.error('Error downloading invoice:', error);
+      console.error("Error downloading invoice:", error);
     }
   };
-  
+
   const handleSelectChangeStatus = async (selectedValue) => {
     try {
       switch (selectedValue) {
-        case 'all':
+        case "all":
           await getInvoices();
           break;
-        case 'paid':
+        case "paid":
           await getPaidInvoices();
           break;
-        case 'unpaid':
+        case "unpaid":
           await getUnpaidInvoices();
           break;
-        case 'overdue':
+        case "overdue":
           await getOverdueInvoices();
           break;
-        case 'draft':
+        case "draft":
           await getDraftInvoices();
           break;
         default:
           break;
       }
     } catch (err) {
-      console.error('Error fetching invoices:', err);
+      console.error("Error fetching invoices:", err);
     }
   };
 
   const handleSelectChangeDays = async (selectedValue) => {
     try {
       switch (selectedValue) {
-        case 'last30':
+        case "last30":
           await getThirtyDaysInvoices();
           break;
-        case 'last60':
+        case "last60":
           await getSixtyDaysInvoices();
           break;
-        case 'last90':
+        case "last90":
           await getNinetyDaysInvoices();
           break;
         default:
           break;
       }
     } catch (err) {
-      console.error('Error fetching invoices:', err);
+      console.error("Error fetching invoices:", err);
     }
   };
 
@@ -339,134 +379,134 @@ const OverDue = () => {
       const value = e.target.value;
       const response = await axios.get(`/invoices?searchKey=${value}`, {
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + localStorage.getItem('token'),
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
         },
-        withCredentials: true
+        withCredentials: true,
       });
       setInvoices(response.data.invoices);
     } catch (err) {
       console.error(err);
       if (!err?.response) {
-        setErrMsg('No Server Response!');
+        setErrMsg("No Server Response!");
       } else if (err.response?.status === 403) {
-        setErrMsg('Oops! You are not authorized to consume this resource.')
+        setErrMsg("Oops! You are not authorized to consume this resource.");
       } else {
-        router.push('/');
+        router.push("/");
       }
     }
-  }
+  };
 
   useEffect(() => {
     const getInvoices = async () => {
       try {
-        const response = await axios.get('/invoices', {
+        const response = await axios.get("/invoices", {
           headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + localStorage.getItem('token'),
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
           },
-          withCredentials: true
+          withCredentials: true,
         });
         setInvoices(response.data.invoices);
       } catch (err) {
         console.error(err);
         if (!err?.response) {
-          setErrMsg('No Server Response!');
+          setErrMsg("No Server Response!");
         } else if (err.response?.status === 403) {
-          setErrMsg('Oops! You are not authorized to consume this resource.')
+          setErrMsg("Oops! You are not authorized to consume this resource.");
         } else {
-          router.push('/');
+          router.push("/");
         }
       }
-    }
+    };
 
     const getPaidInvoices = async () => {
       try {
-        const response = await axios.get('/invoices?status=paid', {
+        const response = await axios.get("/invoices?status=paid", {
           headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + localStorage.getItem('token'),
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
           },
-          withCredentials: true
+          withCredentials: true,
         });
         setPaidInvoicesCount(response.data.count);
       } catch (err) {
         console.error(err);
         if (!err?.response) {
-          setErrMsg('No Server Response!');
+          setErrMsg("No Server Response!");
         } else if (err.response?.status === 403) {
-          setErrMsg('Oops! You are not authorized to consume this resource.')
+          setErrMsg("Oops! You are not authorized to consume this resource.");
         } else {
-          router.push('/');
+          router.push("/");
         }
       }
-    }
+    };
 
     const getUnpaidInvoices = async () => {
       try {
-        const response = await axios.get('/invoices?status=unpaid', {
+        const response = await axios.get("/invoices?status=unpaid", {
           headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + localStorage.getItem('token'),
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
           },
-          withCredentials: true
+          withCredentials: true,
         });
         setUnpaidInvoicesCount(response.data.count);
       } catch (err) {
         console.error(err);
         if (!err?.response) {
-          setErrMsg('No Server Response!');
+          setErrMsg("No Server Response!");
         } else if (err.response?.status === 403) {
-          setErrMsg('Oops! You are not authorized to consume this resource.')
+          setErrMsg("Oops! You are not authorized to consume this resource.");
         } else {
-          router.push('/');
+          router.push("/");
         }
       }
-    }
+    };
 
     const getOverdueInvoices = async () => {
       try {
-        const response = await axios.get('/invoices?status=overdue', {
+        const response = await axios.get("/invoices?status=overdue", {
           headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + localStorage.getItem('token'),
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
           },
-          withCredentials: true
+          withCredentials: true,
         });
         setOverdueInvoicesCount(response.data.count);
       } catch (err) {
         console.error(err);
         if (!err?.response) {
-          setErrMsg('No Server Response!');
+          setErrMsg("No Server Response!");
         } else if (err.response?.status === 403) {
-          setErrMsg('Oops! You are not authorized to consume this resource.')
+          setErrMsg("Oops! You are not authorized to consume this resource.");
         } else {
-          router.push('/');
+          router.push("/");
         }
       }
-    }
+    };
 
     const getDraftInvoices = async () => {
       try {
-        const response = await axios.get('/invoices?status=draft', {
+        const response = await axios.get("/invoices?status=draft", {
           headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + localStorage.getItem('token'),
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
           },
-          withCredentials: true
+          withCredentials: true,
         });
         setDraftInvoicesCount(response.data.count);
       } catch (err) {
         console.error(err);
         if (!err?.response) {
-          setErrMsg('No Server Response!');
+          setErrMsg("No Server Response!");
         } else if (err.response?.status === 403) {
-          setErrMsg('Oops! You are not authorized to consume this resource.')
+          setErrMsg("Oops! You are not authorized to consume this resource.");
         } else {
-          router.push('/');
+          router.push("/");
         }
       }
-    }
+    };
 
     getInvoices();
     getPaidInvoices();
@@ -520,7 +560,6 @@ const OverDue = () => {
       <svg
         width="22"
         height="19"
-        className=" rounded-full"
         viewBox="0 0 22 19"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -540,7 +579,6 @@ const OverDue = () => {
       <svg
         width="18"
         height="21"
-        className=" rounded-full"
         viewBox="0 0 18 21"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -555,7 +593,12 @@ const OverDue = () => {
   const invoiceData = [
     { status: "Paid", amount: paidInvoicesCount, icon: <PaidIcon /> },
     { status: "Unpaid", amount: unpaidInvoicesCount, icon: <UnpaidIcon /> },
-    { status: "Overdue", amount: overdueInvoicesCount, color: "red-500", icon: <OverdueIcon /> },
+    {
+      status: "Overdue",
+      amount: overdueInvoicesCount,
+      color: "red-500",
+      icon: <OverdueIcon />,
+    },
     { status: "Draft", amount: draftInvoicesCount, icon: <DraftIcon /> },
   ];
 
@@ -564,9 +607,9 @@ const OverDue = () => {
   };
 
   return (
-    <div className="flex mt-16  justify-center py-5">
+    <div className="flex h-screen">
       {/* paid invoice section */}
-      <div className="items-center justify-center bg-[#333333] text-white px-4">
+      <div className="items-center justify-center bg-[#333333] text-white px-4 w-64">
         <div className="mt-[2rem] ml-[2rem]">
           <div className="ml-4">
             <img src="/KBS.png" alt="Avatar" className="w-[6rem] mr-2" />
@@ -634,43 +677,47 @@ const OverDue = () => {
             </Link>
           </div>
         </div>
-        <div className="relative p-[1.2rem] bg-white text-xs rounded-3xl text-black mt-[73rem] ml-4 mr-4">
-          <div className="absolute top-0 left-1/2 transform -translate-x-1/2">
-            <img
-              src="/croo2.png"
-              alt="croo"
-              className="w-[3.5rem] mr-1 -mt-[1.8rem]"
-            />
-          </div>
-          <div className="ml-4">
-            <div className="mt-3">
-              <p>Are you</p>
-              <p>experiencing</p>
-              <p>problem creating</p>
-              <p>invoice?</p>
-              <p>Kindly contact</p>
-              <p>the Help Center</p>
+        <div className="flex-1 relative">
+          <div className="fixed p-[1.2rem] bg-white text-xs rounded-3xl text-black mt-[5rem] mr-4 md:mr-8 lg:mr-12">
+            <div className="absolute top-0 left-1/2 transform -translate-x-1/2">
+              <img
+                src="/croo2.png"
+                alt="croo"
+                className="w-[3.5rem] mr-1 -mt-[1.8rem]"
+              />
             </div>
-            <Link href="/help">
-              <button className="block text-white mt-2 px-4 py-2 bg-black rounded hover:bg-gray-600">
-                Help Center
-              </button>
-            </Link>
+            <div className="ml-4">
+              <div className="mt-3">
+                <p>Are you</p>
+                <p>experiencing</p>
+                <p>problem creating</p>
+                <p>invoice?</p>
+                <p>Kindly contact</p>
+                <p>the Help Center</p>
+              </div>
+              <Link href="/help">
+                <button className="block text-white mt-2 px-4 py-2 bg-black rounded hover:bg-gray-600">
+                  Help Center
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
       </div>
       {/* search invoice section */}
-      <div className="text-black bg-white px-9">
-        <div className="flex items-center mt-[2rem]">
+      <div className="text-black bg-white w-full px-[3rem]">
+        <div className="flex justify-between items-center mt-[2rem] md:px-8 lg:px-12">
           <div className="flex items-center mr-[3rem]">
-            <p className="w-8 h-8 rounded-full mr-2 p-1 bg-black text-white text-center">{nameAbbr}</p>
+            <p className="w-8 h-8 rounded-full mr-2 p-1 bg-black text-white text-center">
+              {nameAbbr}
+            </p>
             <div>
               <p className="font-semibold text-xl">{fullName}</p>
               <p className="font-small text-xs">{email}</p>
             </div>
           </div>
-          <div className="flex items-center ml-[4rem]">
-            <div className="flex mr-5 relative">
+          <div className="flex items-center">
+            <div className="flex relative">
               <input
                 type="text"
                 placeholder="Search invoices"
@@ -684,11 +731,7 @@ const OverDue = () => {
                 }}
               />
             </div>
-            <div className="mr-4">
-              <Link href="/createInvoice" className="bg-yellow-400 text-black px-4 py-2 rounded-md mr-2">
-                + New Invoice
-              </Link>
-            </div>
+
             {/* <div className="mr-3">
               <button>
                 <img
@@ -707,10 +750,41 @@ const OverDue = () => {
               />
             </button> */}
           </div>
+          <div className="flex items-center">
+            <Link
+              href="/createInvoice"
+              className="flex items-center bg-yellow-400 text-black px-2 py-2 rounded-md mr-2"
+            >
+              <div className="flex items-center">
+                <svg
+                  width="11"
+                  height="11"
+                  viewBox="0 0 8 8"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="mr-1 sm:mr-2"
+                >
+                  <path
+                    d="M4 1V4M4 4V7M4 4H7M4 4L1 4"
+                    stroke="#333333"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <span className="text-xs sm:text-sm">New Invoice</span>
+              </div>
+            </Link>
+          </div>
         </div>
         {/* Invoice Overview section */}
         <div className="pt-7 mt-[2rem]">
-          <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
+          <p
+            ref={errRef}
+            className={errMsg ? "errmsg" : "offscreen"}
+            aria-live="assertive"
+          >
+            {errMsg}
+          </p>
           <h1 className="mb-[1rem] text-2xl">Invoice overview</h1>
           <div className="flex flex-col bg-[#000000] p-4 rounded-md shadow-md mt-2">
             <div className="grid grid-cols-4 gap-4">
@@ -779,7 +853,12 @@ const OverDue = () => {
               Export Invoice
             </button>
             <div className="relative">
-              <select onChange={(event) => handleSelectChangeStatus(event.target.value)} className="appearance-none bg-white px-4 py-3 rounded-md border font-medium border-black text-black text-xs hover:bg-gray-100 transition-colors duration-200 pr-8">
+              <select
+                onChange={(event) =>
+                  handleSelectChangeStatus(event.target.value)
+                }
+                className="appearance-none bg-white px-4 py-3 rounded-md border font-medium border-black text-black text-xs hover:bg-gray-100 transition-colors duration-200 pr-8"
+              >
                 <option value="all">All Invoice</option>
                 <option value="overdue">Overdue Invoice</option>
                 <option value="unpaid">Unpaid Invoice</option>
@@ -797,7 +876,10 @@ const OverDue = () => {
               </div>
             </div>
             <div className="relative">
-              <select onChange={(event) => handleSelectChangeDays(event.target.value)} className="appearance-none bg-white text-gray-400 border border-gray-400 font-medium px-4 py-2 rounded-md hover:bg-gray-100 transition-colors duration-200 pr-8">
+              <select
+                onChange={(event) => handleSelectChangeDays(event.target.value)}
+                className="appearance-none bg-white text-gray-400 border border-gray-400 font-medium px-4 py-2 rounded-md hover:bg-gray-100 transition-colors duration-200 pr-8"
+              >
                 <option value="last30">Last 30 days</option>
                 <option value="last60">Last 60 days</option>
                 <option value="last90">Last 90 days</option>
@@ -816,29 +898,16 @@ const OverDue = () => {
         </div>
         {/* Client table section */}
         <div className="overflow-x-auto shadow-md rounded-md">
-          <div className="rounded-lg overflow-hidden">
+          <div className="rounded-lg max-w-full overflow-x-auto">
             <table className="w-full border-collapse">
               <thead className="bg-black rounded-t-lg ">
                 <tr className="text-sm text-white">
                   <th className="py-2 px-4 flex items-center">
-                    <svg
-                      className="h-6 w-4 mr-4"
-                      width="16"
-                      height="17"
-                      viewBox="0 0 16 17"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <rect
-                        x="0.4"
-                        y="0.9"
-                        width="15.2"
-                        height="15.2"
-                        rx="2.8"
-                        stroke="#949494"
-                        strokeWidth="0.8"
-                      />
-                    </svg>
+                    <input
+                      type="checkbox"
+                      className="form-checkbox h-6 w-4 text-blue-600 rounded mr-4"
+                      onChange={(e) => handleSelectAllClients(e.target.checked)}
+                    />
                     Client
                   </th>
                   <th className="py-2 px-4">Status</th>
@@ -848,47 +917,24 @@ const OverDue = () => {
                   <th className="py-2 px-4">Action</th>
                 </tr>
               </thead>
-              {
-                invoices &&
+              {invoices && (
                 <tbody className="relative">
                   {invoices.map((invoice, index) => (
-                    <tr key={index}>
+                    <tr key={index}  className="border-b last:border-none">
                       <td className="py-2 px-4 ml-9">
                         <div className="flex items-center">
-                          <div className="mr-4 flex">
-                            <svg
-                              width="16"
-                              className="mr-7"
-                              height="17"
-                              viewBox="0 0 16 17"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <rect
-                                x="0.4"
-                                y="0.9"
-                                width="15.2"
-                                height="15.2"
-                                rx="2.8"
-                                stroke="#949494"
-                                strokeWidth="0.8"
-                              />
-                            </svg>
-                            <svg
-                              width="20"
-                              height="21"
-                              viewBox="0 0 20 21"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M3.12104 16.3037C5.15267 15.1554 7.4998 14.5 10 14.5C12.5002 14.5 14.8473 15.1554 16.879 16.3037M13 8.5C13 10.1569 11.6569 11.5 10 11.5C8.34315 11.5 7 10.1569 7 8.5C7 6.84315 8.34315 5.5 10 5.5C11.6569 5.5 13 6.84315 13 8.5ZM19 10.5C19 15.4706 14.9706 19.5 10 19.5C5.02944 19.5 1 15.4706 1 10.5C1 5.52944 5.02944 1.5 10 1.5C14.9706 1.5 19 5.52944 19 10.5Z"
-                                stroke="#333333"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </svg>
+                          <div className="mr-2 flex">
+                            <input
+                              type="checkbox"
+                              className="form-checkbox h-6 w-4 text-blue-600 rounded mr-2"
+                              checked={selectedClients.includes(invoice.id)}
+                              onChange={(e) =>
+                                handleClientCheckbox(
+                                  e.target.checked,
+                                  invoice.id
+                                )
+                              }
+                            />
                           </div>
                           <div>
                             <div>{invoice.customerName}</div>
@@ -899,25 +945,31 @@ const OverDue = () => {
                         </div>
                       </td>
 
-                      <td className="py-2 px-7">{invoice.status}</td>
-                      <td className="py-2 px-7">
-                        {new Date(invoice.issueDate).toLocaleDateString("en-US", {
-                          year: "numeric",
-                          month: "short",
-                          day: "numeric",
-                        })}
+                      <td className="py-2 px-4  sm:pl-[3.2rem]">{invoice.status}</td>
+                      <td className="py-2 px-4 sm:pl-[3.4rem]">
+                        {new Date(invoice.issueDate).toLocaleDateString(
+                          "en-US",
+                          {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          }
+                        )}
                       </td>
-                      <td className="py-2 px-6">
+                      <td className="py-2 px-4 sm:pl-[3.2rem]">
                         {new Date(invoice.dueDate).toLocaleDateString("en-US", {
                           year: "numeric",
                           month: "short",
                           day: "numeric",
                         })}
                       </td>
-                      <td className="py-2 px-6">
-                        &#8358;{(invoice.total).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                      <td className="py-2 px-4 sm:pl-[3.2rem]">
+                        &#8358;
+                        {invoice.total
+                          .toString()
+                          .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                       </td>
-                      <td className="py-2 px-[4rem] relative">
+                      <td className="py-2 px-4 sm:pl-[3rem] ">
                         <button
                           className="hover:bg-gray-400 text-gray-800 py-1 px-2 rounded"
                           onClick={() => toggleDropdown(index)}
@@ -939,26 +991,36 @@ const OverDue = () => {
                           </svg>
                         </button>
                         {showDropdown === index && (
-                          <div onClick={() => toggleDropdown(index)} className="absolute right-0 mt-2 py-4 px-4 mr-3 bg-white shadow-md rounded-md z-10">
-                            <button onClick={() => changeStatusToPaid(invoice.id)} className="flex w-full gap-1 items-center text-[#8DED85] px-2 text-sm hover:bg-gray-100">
+                          <div
+                            onClick={() => toggleDropdown(index)}
+                            className="relative right-[59px] bottom-[5px] mt-2 py-4 px-1 bg-white shadow-md rounded-md z-[-5px]"
+                          >
+                            <button
+                              onClick={() => changeStatusToPaid(invoice.id)}
+                              className="flex w-full gap-1 items-center text-[#8DED85] px-2 text-sm hover:bg-gray-100"
+                            >
                               <svg
-                                width="14"
-                                height="13"
-                                viewBox="0 0 14 13"
+                                width="16"
+                                height="16"
+                                className=" rounded-full bg-[#8DED85]"
+                                viewBox="0 0 22 21"
                                 fill="none"
                                 xmlns="http://www.w3.org/2000/svg"
                               >
                                 <path
-                                  d="M6.05878 2.3798H2.67277C1.92475 2.3798 1.31836 2.98619 1.31836 3.73421V11.1834C1.31836 11.9315 1.92475 12.5378 2.67277 12.5378H10.122C10.87 12.5378 11.4764 11.9315 11.4764 11.1834V7.79742M10.5187 1.42209C11.0476 0.893158 11.9052 0.893158 12.4341 1.42209C12.963 1.95102 12.963 2.80858 12.4341 3.33751L6.61979 9.15183H4.70438L4.70437 7.23641L10.5187 1.42209Z"
-                                  stroke="#8DED85"
-                                  strokeWidth="0.677203"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
+                                  d="M7.75034 10.5003L9.917 12.667L14.2503 8.33367M6.48797 2.5888C7.2653 2.52677 8.00325 2.2211 8.59676 1.71531C9.98179 0.535 12.0189 0.535 13.4039 1.71531C13.9974 2.2211 14.7354 2.52677 15.5127 2.5888C17.3267 2.73356 18.7671 4.174 18.9119 5.98797C18.9739 6.7653 19.2796 7.50325 19.7854 8.09676C20.9657 9.48179 20.9657 11.5189 19.7854 12.9039C19.2796 13.4974 18.9739 14.2354 18.9119 15.0127C18.7671 16.8267 17.3267 18.2671 15.5127 18.4119C14.7354 18.4739 13.9974 18.7796 13.4039 19.2854C12.0189 20.4657 9.98179 20.4657 8.59676 19.2854C8.00325 18.7796 7.2653 18.4739 6.48797 18.4119C4.674 18.2671 3.23356 16.8267 3.0888 15.0127C3.02677 14.2354 2.7211 13.4974 2.21531 12.9039C1.035 11.5189 1.035 9.48179 2.21531 8.09676C2.7211 7.50325 3.02677 6.7653 3.0888 5.98797C3.23356 4.174 4.674 2.73356 6.48797 2.5888Z"
+                                  stroke="#111827"
+                                  stroke-width="1.5"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
                                 />
                               </svg>
                               Paid
                             </button>
-                            <Link href={`/invoicePreview/${invoice.id}`} className="flex w-full gap-1 items-center text-[#8DED85] px-2 text-sm hover:bg-gray-100">
+                            <Link
+                              href={`/invoicePreview/${invoice.id}`}
+                              className="flex w-full gap-1 items-center text-[#8DED85] px-2 text-sm hover:bg-gray-100"
+                            >
                               <svg
                                 width="14"
                                 height="13"
@@ -977,7 +1039,7 @@ const OverDue = () => {
                               Preview
                             </Link>
 
-                            <button className="flex items-center w-full gap-2 text-[#F5D563] px-2 text-sm hover:bg-gray-100">
+                            {/* <button className="flex items-center w-full gap-2 text-[#F5D563] px-2 text-sm hover:bg-gray-100">
                               <svg
                                 width="13"
                                 height="14"
@@ -994,8 +1056,11 @@ const OverDue = () => {
                                 />
                               </svg>
                               Notify
-                            </button>
-                            <button onClick={() => handleDeleteClick(invoice.id)} className="flex items-center gap-2 w-full px-2 text-sm text-[#FB4545] hover:bg-gray-100">
+                            </button> */}
+                            <button
+                              onClick={() => handleDeleteClick(invoice.id)}
+                              className="flex items-center gap-2 w-full px-2 text-sm text-[#FB4545] hover:bg-gray-100"
+                            >
                               <svg
                                 width="14"
                                 height="12"
@@ -1013,7 +1078,10 @@ const OverDue = () => {
                               </svg>
                               Delete
                             </button>
-                            <button onClick={() => downloadInvoice(invoice.id)} className="flex items-center gap-2 w-full text-sm text-[#FFD700] py-1 px-2 hover:bg-gray-100">
+                            <button
+                              onClick={() => downloadInvoice(invoice.id)}
+                              className="flex items-center gap-2 w-full text-sm text-[#FFD700] px-2 hover:bg-gray-100"
+                            >
                               <svg
                                 width="13"
                                 height="13"
@@ -1037,7 +1105,7 @@ const OverDue = () => {
                     </tr>
                   ))}
                 </tbody>
-              }
+              )}
             </table>
           </div>
         </div>

@@ -197,7 +197,7 @@ const InvoicePreview = () => {
   }, []);
 
   return (
-    <div className="flex flex-col mt-[11rem] ml-[2rem] w-[75rem]">
+    <div className="flex flex-col mt-[7rem] px-[2rem]">
       <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
       <div className="mb-4">
         <Link href='/allInvoices' className="flex gap-2 items-center text-2xl">
@@ -738,7 +738,7 @@ const InvoicePreview = () => {
               </div>
             </div>
           </div>
-          <div className="flex justify-between mt-[3rem] mb-[2rem]">
+          <div className="flex mt-[3rem] mb-[2rem] justify-end">
             <button onClick={handleEditInvoice} className="flex gap-2 bg-[#FFD700] hover:bg-gray-300 text-black py-2 px-4 rounded-sm">
               Edit Invoice
               <div className="mt-[.6rem]">

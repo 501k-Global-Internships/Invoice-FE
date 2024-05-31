@@ -704,10 +704,10 @@ const createInvoice = () => {
             Save as draft
           </button>
           <button onClick={handleSubmit} className="flex gap-2 bg-[#FFD700] hover:bg-gray-300 text-black py-2 px-4 rounded-sm">
-            Proceed to review
+            Create invoice
             <div className="mt-[.6rem]">
               <svg
-                width="14"
+                width="13"
                 height="8"
                 viewBox="0 0 14 8"
                 fill="none"
