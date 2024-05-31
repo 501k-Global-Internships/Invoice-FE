@@ -1,68 +1,79 @@
 "use client";
-import React, { useRef, useState, useEffect } from 'react';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import React, { useRef, useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation";
 import axios from "../api/axios";
 
 const SignUpForm = () => {
   const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
-  const REGISTER_URL = '/sign-up';
+  const REGISTER_URL = "/sign-up";
 
   const errRef = useRef();
 
   const [email, setEmail] = useState();
 
-  const [name, setName] = useState('');
+  const [name, setName] = useState("");
 
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState("");
   const [validPassword, setValidPassword] = useState(false);
-
-  const [passwordConfirmation, setPasswordConfirmation] = useState('');
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [validMatch, setValidMatch] = useState(false);
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
 
-  const [errMsg, setErrMsg] = useState('');
+  const [errMsg, setErrMsg] = useState("");
   const router = useRouter();
+  
+  const handleTogglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
+
+  const handleToggleConfirmPasswordVisibility = () => {
+    setConfirmPasswordVisible(!confirmPasswordVisible);
+  };
+
+  const handlePaste = (e) => {
+    e.preventDefault();
+  };
 
   useEffect(() => {
     setValidPassword(PWD_REGEX.test(password));
     setValidMatch(password === passwordConfirmation);
-  }, [password, passwordConfirmation, PWD_REGEX])
+  }, [password, passwordConfirmation, PWD_REGEX]);
 
   useEffect(() => {
-    setErrMsg('');
-  }, [email, name, password, passwordConfirmation])
+    setErrMsg("");
+  }, [email, name, password, passwordConfirmation]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const payload = { name, email, password, passwordConfirmation }
-
+    const payload = { name, email, password, passwordConfirmation };
     try {
-      const response = await axios.post(REGISTER_URL,
-        JSON.stringify(payload),
-        {
-          headers: { 'Content-Type': 'application/json' },
-          withCredentials: true
-        }
-      );
-      localStorage.setItem('token', response?.data?.token);
+      const response = await axios.post(REGISTER_URL, JSON.stringify(payload), {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      });
+      localStorage.setItem("token", response?.data?.token);
 
       const token = response?.data?.token;
 
       // setAuth({ email, password, token });
-      router.push("/")
+      router.push("/");
     } catch (err) {
       if (!err?.response) {
-        setErrMsg('No Server Response!');
+        setErrMsg("No Server Response!");
       } else if (err.response?.status === 409) {
-        setErrMsg('Email already exist!');
+        setErrMsg("Email already exist!");
       } else if (err.response?.status === 400) {
-        setErrMsg('Bad request!');
+        setErrMsg("Bad request!");
       } else {
-        setErrMsg('Registration Failed!')
+        setErrMsg("Registration Failed!");
       }
       errRef.current.focus();
     }
-  }
+  };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
@@ -71,7 +82,13 @@ const SignUpForm = () => {
       <h2 className="text-xl font-medium mb-7 text-center">
         Create an account to enjoy our solutions
       </h2>
-      <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
+      <p
+        ref={errRef}
+        className={errMsg ? "errmsg" : "offscreen"}
+        aria-live="assertive"
+      >
+        {errMsg}
+      </p>
       <div className="w-full max-w-md bg-[#565656] rounded-t-2xl shadow-md px-11 py-8">
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -95,36 +112,19 @@ const SignUpForm = () => {
 
           <div className="mb-4 relative">
             <input
-              type="password"
+              type={passwordVisible ? "text" : "password"}
               id="password"
               onChange={(e) => setPassword(e.target.value)}
+              onPaste={handlePaste}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
               placeholder="Password"
             />
-            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-              <svg
-                width="22"
-                height="16"
-                viewBox="0 0 22 16"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
+            <div className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
+              <FontAwesomeIcon
+                icon={passwordVisible ? faEye : faEyeSlash}
                 className="text-gray-500"
-              >
-                <path
-                  d="M13.9998 8C13.9998 9.65685 12.6566 11 10.9998 11C9.3429 11 7.99976 9.65685 7.99976 8C7.99976 6.34315 9.3429 5 10.9998 5C12.6566 5 13.9998 6.34315 13.9998 8Z"
-                  stroke="#575757"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M1.45801 7.99997C2.73228 3.94288 6.52257 1 11.0002 1C15.4778 1 19.2681 3.94291 20.5424 8.00004C19.2681 12.0571 15.4778 15 11.0002 15C6.52256 15 2.73226 12.0571 1.45801 7.99997Z"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+                onClick={handleTogglePasswordVisibility}
+              />
             </div>
           </div>
           <p className="text-gray-300 text-[.76rem] mt-4 mb-2">
@@ -194,36 +194,19 @@ const SignUpForm = () => {
           </div>
           <div className="mb-6 relative">
             <input
-              type="password"
+              type={confirmPasswordVisible ? "text" : "password"}
               id="confirmPassword"
               onChange={(e) => setPasswordConfirmation(e.target.value)}
+              onPaste={handlePaste}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
               placeholder="Confirm password"
             />
-            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-              <svg
-                width="22"
-                height="16"
-                viewBox="0 0 22 16"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
+            <div className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
+            <FontAwesomeIcon
+                icon={confirmPasswordVisible ? faEye : faEyeSlash}
                 className="text-gray-500"
-              >
-                <path
-                  d="M13.9998 8C13.9998 9.65685 12.6566 11 10.9998 11C9.3429 11 7.99976 9.65685 7.99976 8C7.99976 6.34315 9.3429 5 10.9998 5C12.6566 5 13.9998 6.34315 13.9998 8Z"
-                  stroke="#575757"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M1.45801 7.99997C2.73228 3.94288 6.52257 1 11.0002 1C15.4778 1 19.2681 3.94291 20.5424 8.00004C19.2681 12.0571 15.4778 15 11.0002 15C6.52256 15 2.73226 12.0571 1.45801 7.99997Z"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+                onClick={handleToggleConfirmPasswordVisibility}
+              />
             </div>
           </div>
           <button

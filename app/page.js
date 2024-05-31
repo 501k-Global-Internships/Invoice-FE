@@ -1,58 +1,61 @@
 "use client";
-import React, { useRef, useState, useEffect } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation'
-import axios from './api/axios';
+import React, { useRef, useState, useEffect } from "react";
+import Link from "next/link";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { useRouter } from "next/navigation";
+import axios from "./api/axios";
 
 const LoginForm = () => {
-  const [password, setPassword] = useState('');
-  const [email, setEmail] = useState('');
-  const [errMsg, setErrMsg] = useState('');
+  const [password, setPassword] = useState("");
+  const [visible, setVisible] = useState(false);
+  const [email, setEmail] = useState("");
+  const [errMsg, setErrMsg] = useState("");
 
   const router = useRouter();
 
   const errRef = useRef();
-  const LOGIN_URL = '/sign-in';
+  const LOGIN_URL = "/sign-in";
+  const handlePaste = (e) => {
+    e.preventDefault();
+  };
 
   useEffect(() => {
-    setErrMsg('');
+    setErrMsg("");
   }, [email, password]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const payload = { email, password }
+    const payload = { email, password };
     try {
-      const response = await axios.post(LOGIN_URL,
-        JSON.stringify(payload),
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          withCredentials: true
-        }
-      );
-      localStorage.setItem('token', response?.data?.token);
-      localStorage.setItem('name', response?.data?.name);
-      localStorage.setItem('kbsEmail', response?.data?.email);
+      const response = await axios.post(LOGIN_URL, JSON.stringify(payload), {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
+      localStorage.setItem("token", response?.data?.token);
+      localStorage.setItem("name", response?.data?.name);
+      localStorage.setItem("kbsEmail", response?.data?.email);
 
-      router.push('/allInvoices');
+      router.push("/allInvoices");
     } catch (err) {
       if (!err?.response) {
         console.log(err);
-        setErrMsg('Server Not Responding!');
+        setErrMsg("Server Not Responding!");
       } else if (err.response?.status === 400) {
-        setErrMsg('Oops! Something went wrong. Invalid Email or Password.');
+        setErrMsg("Oops! Something went wrong. Invalid Email or Password.");
       } else if (err.response?.status === 401) {
-        setErrMsg('Unauthorized! Invalid Email or Password.');
-      }  else if (err.response?.status === 404) {
-        setErrMsg('We do not have a user with this email. Please sign up.');
+        setErrMsg("Unauthorized! Invalid Email or Password.");
+      } else if (err.response?.status === 404) {
+        setErrMsg("We do not have a user with this email. Please sign up.");
       } else {
-        setErrMsg('Login Failed!');
+        setErrMsg("Login Failed!");
       }
       errRef.current.focus();
     }
-  }
+  };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
@@ -61,8 +64,14 @@ const LoginForm = () => {
       <h2 className="font-medium text-center">
         Login to your account to continue
       </h2>
-      <h2 className='font-medium mb-7 text-center'>where you left off</h2>
-      <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
+      <h2 className="font-medium mb-7 text-center">where you left off</h2>
+      <p
+        ref={errRef}
+        className={errMsg ? "errmsg" : "offscreen"}
+        aria-live="assertive"
+      >
+        {errMsg}
+      </p>
       <div className="w-full max-w-md bg-[#565656] rounded-t-lg shadow-md px-11 py-11">
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -76,40 +85,27 @@ const LoginForm = () => {
           </div>
           <div className="mb-4 relative">
             <input
-              type="password"
+              value={password}
+              type={visible ? "text" : "password"}
               id="password"
+              onPaste={handlePaste}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
               placeholder="Password"
             />
-            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-              <svg
-                width="22"
-                height="16"
-                viewBox="0 0 22 16"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="text-gray-500"
-              >
-                <path
-                  d="M13.9998 8C13.9998 9.65685 12.6566 11 10.9998 11C9.3429 11 7.99976 9.65685 7.99976 8C7.99976 6.34315 9.3429 5 10.9998 5C12.6566 5 13.9998 6.34315 13.9998 8Z"
-                  stroke="#575757"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M1.45801 7.99997C2.73228 3.94288 6.52257 1 11.0002 1C15.4778 1 19.2681 3.94291 20.5424 8.00004C19.2681 12.0571 15.4778 15 11.0002 15C6.52256 15 2.73226 12.0571 1.45801 7.99997Z"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+            <div className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
+              <FontAwesomeIcon
+                icon={visible ? faEye : faEyeSlash}
+                className="text-gray-500 cursor-pointer"
+                onClick={() => setVisible(!visible)}
+              />
             </div>
           </div>
           <div className=" mb-4 text-end">
-            <Link href="/resetPassword" className="text-[#FAFAFA] hover:text-gray-300">
+            <Link
+              href="/resetPassword"
+              className="text-[#FAFAFA] hover:text-gray-300"
+            >
               Forgot your password?
             </Link>
           </div>
@@ -147,7 +143,10 @@ const LoginForm = () => {
             </div>
             <p className="text-[#FAFAFA]">
               New User?
-              <Link href="/signUp" className="text-[#FAFAFA] hover:text-gray-300">
+              <Link
+                href="/signUp"
+                className="text-[#FAFAFA] hover:text-gray-300"
+              >
                 <span> Sign up</span>
               </Link>
             </p>
