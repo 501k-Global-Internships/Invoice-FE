@@ -3,6 +3,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation'
 import axios from './api/axios';
+import { auth, provider, signInWithPopup } from '../config/firebaseConfig';
 
 const LoginForm = () => {
   const [password, setPassword] = useState('');
@@ -53,6 +54,32 @@ const LoginForm = () => {
       errRef.current.focus();
     }
   }
+
+  const signInWithGoogle = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+
+      const name = result.user.displayName
+      const email = result.user.email
+      
+      const response = await axios.post("/auth_sign_in",
+        JSON.stringify({ name, email }),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          withCredentials: true
+        }
+      );
+      localStorage.setItem('token', response?.data?.token);
+      localStorage.setItem('name', response?.data?.name);
+      localStorage.setItem('kbsEmail', response?.data?.email);
+
+      router.push('/allInvoices');
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
@@ -158,8 +185,9 @@ const LoginForm = () => {
         <button
           type="button"
           className="flex items-center justify-center gap-3 text-[#FFE86B]"
+          onClick={signInWithGoogle}
         >
-          Sign up with Google
+          Sign in with Google
           <svg
             width="14"
             height="8"

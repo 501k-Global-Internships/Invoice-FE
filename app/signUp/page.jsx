@@ -3,6 +3,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import Link from "next/link";
 import { useRouter } from 'next/navigation'
 import axios from "../api/axios";
+import { auth, provider, signInWithPopup } from '../../config/firebaseConfig';
 
 const SignUpForm = () => {
   const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
@@ -46,9 +47,6 @@ const SignUpForm = () => {
       );
       localStorage.setItem('token', response?.data?.token);
 
-      const token = response?.data?.token;
-
-      // setAuth({ email, password, token });
       router.push("/")
     } catch (err) {
       if (!err?.response) {
@@ -63,6 +61,32 @@ const SignUpForm = () => {
       errRef.current.focus();
     }
   }
+
+  const signInWithGoogle = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+
+      const name = result.user.displayName
+      const email = result.user.email
+      
+      const response = await axios.post("/auth_sign_in",
+        JSON.stringify({ name, email }),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          withCredentials: true
+        }
+      );
+      localStorage.setItem('token', response?.data?.token);
+      localStorage.setItem('name', response?.data?.name);
+      localStorage.setItem('kbsEmail', response?.data?.email);
+
+      router.push('/allInvoices');
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
@@ -261,6 +285,7 @@ const SignUpForm = () => {
         <button
           type="button"
           className="flex items-center justify-center gap-3 text-[#FFE86B]"
+          onClick={signInWithGoogle}
         >
           Sign up with Google
           <svg
