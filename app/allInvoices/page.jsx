@@ -7,6 +7,8 @@ import axios from "../api/axios";
 const OverDue = () => {
   const [invoices, setInvoices] = useState([]);
   const [showDropdown, setShowDropdown] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(8);
 
   const [paidInvoicesCount, setPaidInvoicesCount] = useState('')
   const [unpaidInvoicesCount, setUnpaidInvoicesCount] = useState('')
@@ -270,15 +272,15 @@ const OverDue = () => {
           'Authorization': `Bearer ${token}`,
         },
       });
-  
+
       // Create a URL for the blob
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-  
+
       // Set the download attribute with a dynamic file name
       link.setAttribute('download', `invoice_${id}.pdf`); // Set the file name
-  
+
       // Append the link to the document, click it, and remove it
       document.body.appendChild(link);
       link.click();
@@ -287,7 +289,7 @@ const OverDue = () => {
       console.error('Error downloading invoice:', error);
     }
   };
-  
+
   const handleSelectChangeStatus = async (selectedValue) => {
     try {
       switch (selectedValue) {
@@ -563,6 +565,36 @@ const OverDue = () => {
     setShowDropdown(showDropdown === index ? null : index);
   };
 
+  const totalPages = Math.ceil(invoices.length / itemsPerPage);
+  const maxPagesToShow = 5;
+
+  let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+  let endPage = startPage + maxPagesToShow - 1;
+
+  if (endPage > totalPages) {
+    endPage = totalPages;
+    startPage = Math.max(1, endPage - maxPagesToShow + 1);
+  }
+
+  const paginationButtons = [];
+
+  for (let i = startPage; i <= 5; i++) {
+    paginationButtons.push(
+      <button
+        key={i}
+        className={
+          currentPage === i ? 'text-black px-3 py-2 rounded-md border-black border hover:bg-gray-100 transition-colors duration-200' :
+            'text-gray-500 px-3 py-2 hover:bg-gray-100 transition-colors duration-200'}
+        onClick={() => setCurrentPage(i)}
+      >
+        {i}
+      </button>
+    );
+  }
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+
   return (
     <div className="flex mt-16  justify-center py-5">
       {/* paid invoice section */}
@@ -740,7 +772,7 @@ const OverDue = () => {
         <div className="flex justify-between items-center py-4 mt-6 rounded-md ">
           <h2 className="text-lg">Clients list</h2>
           <div className="flex space-x-4 mr-4">
-            <button className="flex items-center gap-2 bg-white text-black px-4 py-2 rounded-md border border-black text-xs font-semibold hover:bg-gray-100 transition-colors duration-200">
+            <button onClick={() => downloadInvoice(invoice.id)} className="flex items-center gap-2 bg-white text-black px-4 py-2 rounded-md border border-black text-xs font-semibold hover:bg-gray-100 transition-colors duration-200">
               <div>
                 <svg
                   width="10"
@@ -759,7 +791,7 @@ const OverDue = () => {
               </div>
               Print Invoice
             </button>
-            <button className="flex gap-2 items-center bg-white px-4 py-2 rounded-md border border-black text-xs font-semibold hover:bg-gray-100 transition-colors duration-200">
+            <button onClick={() => downloadInvoice(invoice.id)} className="flex gap-2 items-center bg-white px-4 py-2 rounded-md border border-black text-xs font-semibold hover:bg-gray-100 transition-colors duration-200">
               <div>
                 <svg
                   width="10"
@@ -851,7 +883,7 @@ const OverDue = () => {
               {
                 invoices &&
                 <tbody className="relative">
-                  {invoices.map((invoice, index) => (
+                  {invoices.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((invoice, index) => (
                     <tr key={index}>
                       <td className="py-2 px-4 ml-9">
                         <div className="flex items-center">
@@ -1043,7 +1075,8 @@ const OverDue = () => {
         </div>
         {/* Pagination */}
         <div className="flex justify-center items-center space-x-2 mt-[2rem] mb-7">
-          <button className="bg-white text-gray-700 px-3 py-2 border border-gray-300 rounded hover:bg-gray-100 transition-colors duration-200">
+          <button onClick={() => setCurrentPage(currentPage - 1)}
+            disabled={currentPage === 1} className="bg-white text-gray-700 px-3 py-2 border border-gray-300 rounded hover:bg-gray-100 transition-colors duration-200">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5"
@@ -1057,22 +1090,9 @@ const OverDue = () => {
               />
             </svg>
           </button>
-          <button className=" text-gray-500 px-3 py-2 hover:bg-gray-100 transition-colors duration-200">
-            1
-          </button>
-          <button className=" text-gray-500 px-3 py-2 hover:bg-gray-100 transition-colors duration-200">
-            2
-          </button>
-          <button className=" text-black px-3 py-2 rounded-md border-black border hover:bg-gray-100 transition-colors duration-200">
-            3
-          </button>
-          <button className=" text-gray-500 px-3 py-2 hover:bg-gray-100 transition-colors duration-200">
-            4
-          </button>
-          <button className=" text-gray-500 px-3 py-2 rounded hover:bg-gray-100 transition-colors duration-200">
-            5
-          </button>
-          <button className=" text-black px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+          {paginationButtons}
+          <button onClick={() => setCurrentPage(currentPage + 1)}
+            disabled={currentPage === totalPages} className=" text-black px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors duration-200">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5"
@@ -1087,6 +1107,10 @@ const OverDue = () => {
             </svg>
           </button>
         </div>
+        <p>{`Showing invoices ${indexOfFirstItem + 1} to ${Math.min(
+          indexOfLastItem,
+          invoices.length
+        )} of ${invoices.length}`}</p>
       </div>
     </div>
   );

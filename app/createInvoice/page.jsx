@@ -35,7 +35,7 @@ const createInvoice = () => {
 
   const [tax, setTax] = useState("");
   const [subTotal, setSubTotal] = useState(0);
-  const total = ((subTotal - discount) + tax);
+  const total = ((subTotal - discount) + Number(tax));
 
   const [errMsg, setErrMsg] = useState('');
   const errRef = useRef();
@@ -77,7 +77,7 @@ const createInvoice = () => {
   };
 
   useEffect(() => {
-    const total = items.reduce((sum, item) => sum + item.amount, 0);
+    const total = items.reduce((sum, item) => sum + Number(item.amount), 0);
     setSubTotal(total);
   }, [items]);
 
