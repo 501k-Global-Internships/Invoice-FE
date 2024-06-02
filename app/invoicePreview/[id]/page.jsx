@@ -197,7 +197,8 @@ const InvoicePreview = () => {
   }, []);
 
   return (
-    <div className="flex flex-col mt-[7rem] px-[2rem]">
+    <div className="">
+    <div className="flex flex-col mt-[7rem] w-[94.7rem] px-[2rem]">
       <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
       <div className="mb-4">
         <Link href='/allInvoices' className="flex gap-2 items-center text-2xl">
@@ -762,6 +763,7 @@ const InvoicePreview = () => {
           </div>
         </div>
       }
+    </div>
     </div>
   );
 };

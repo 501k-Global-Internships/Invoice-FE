@@ -609,22 +609,22 @@ const OverDue = () => {
   return (
     <div className="flex h-screen">
       {/* paid invoice section */}
-      <div className="items-center justify-center bg-[#333333] text-white px-4 w-64">
+      <div className="bg-[#333333] text-white px-4 py-8">
         <div className="mt-[2rem] ml-[2rem]">
           <div className="ml-4">
             <img src="/KBS.png" alt="Avatar" className="w-[6rem] mr-2" />
           </div>
-          <div className="mt-[3rem] text-xs flex flex-col">
+          <nav className="space-y-4">
             <Link href="/payroll">
-              <button className="relative px-4 py-2 rounded hover:bg-gray-700 flex items-center mt-2">
+              <button className="px-4 py-2 rounded hover:bg-gray-700 flex items-center mt-2">
                 <div className="w-2 mr-2">
-                  <img src="/payrol.png" alt="payrol" width={40} />
+                  <img src="/payrol.png" alt="payrol" width={40}/>
                 </div>
                 Payroll
               </button>
             </Link>
             <Link href="/transactions">
-              <button className=" mt-[.6rem] px-4 py-2 rounded hover:bg-gray-700 flex items-center">
+              <button className=" mt-[.6rem] flex items-center px-4 py-2 rounded hover:bg-gray-700">
                 <div className="w-2 mr-2">
                   <img src="/tran.png" alt="transaction" width={40} />
                 </div>
@@ -675,10 +675,10 @@ const OverDue = () => {
                 FAQs
               </button>
             </Link>
-          </div>
+          </nav>
         </div>
         <div className="flex-1 relative">
-          <div className="fixed p-[1.2rem] bg-white text-xs rounded-3xl text-black mt-[5rem] mr-4 md:mr-8 lg:mr-12">
+          <div className="relative p-[1.2rem] bg-white text-xs rounded-3xl text-black mt-[5rem] md:mr-8 lg:mr-1">
             <div className="absolute top-0 left-1/2 transform -translate-x-1/2">
               <img
                 src="/croo2.png"
@@ -705,24 +705,24 @@ const OverDue = () => {
         </div>
       </div>
       {/* search invoice section */}
-      <div className="text-black bg-white w-full px-[3rem]">
-        <div className="flex justify-between items-center mt-[2rem] md:px-8 lg:px-12">
-          <div className="flex items-center mr-[3rem]">
-            <p className="w-8 h-8 rounded-full mr-2 p-1 bg-black text-white text-center">
+      <div className="flex-1 bg-white p-8 h-screen">
+        <div className="flex flex-row md:flex-row justify-between items-center mb-8">
+          <div className="flex items-center mb-4 md:mb-0">
+            <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center mr-2">
               {nameAbbr}
-            </p>
+            </div>
             <div>
               <p className="font-semibold text-xl">{fullName}</p>
               <p className="font-small text-xs">{email}</p>
             </div>
           </div>
-          <div className="flex items-center">
-            <div className="flex relative">
+          <div className="flex items-center space-x-4">
+            <div className="relative">
               <input
                 type="text"
                 placeholder="Search invoices"
                 onChange={handleInvoiceSearch}
-                className="px-[2rem] py-2 border w-[358px] border-gray-300 rounded-full ml-[1rem] pl-8"
+                className="pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:outline-none"
                 style={{
                   backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M19 19L13 13M15 8C15 11.866 11.866 15 8 15C4.13401 15 1 11.866 1 8C1 4.13401 4.13401 1 8 1C11.866 1 15 4.13401 15 8Z" stroke="%23666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>')`,
                   backgroundRepeat: "no-repeat",
@@ -777,7 +777,7 @@ const OverDue = () => {
           </div>
         </div>
         {/* Invoice Overview section */}
-        <div className="pt-7 mt-[2rem]">
+        <div className="pt-7 mt-[2rem] ">
           <p
             ref={errRef}
             className={errMsg ? "errmsg" : "offscreen"}
@@ -785,18 +785,18 @@ const OverDue = () => {
           >
             {errMsg}
           </p>
-          <h1 className="mb-[1rem] text-2xl">Invoice overview</h1>
+          <h1 className="text-2xl font-semibold mb-4">Invoice overview</h1>
           <div className="flex flex-col bg-[#000000] p-4 rounded-md shadow-md mt-2">
             <div className="grid grid-cols-4 gap-4">
               {invoiceData.map((item) => (
                 <div
                   key={item.status}
-                  className="flex flex-col items-center bg-white p-6 rounded-md"
+                  className="bg-white text-black p-4 rounded-md flex items-center"
                 >
                   <div className="flex items-center mb-2 mt-1">
                     {/* Render SVG icon directly */}
                     <div
-                      className={`w-12 h-12 flex items-center justify-center rounded-lg ${item.color}`}
+                      className={`w-12 h-12 rounded-full ${item.color} flex items-center justify-center mr-4`}
                     >
                       {item.icon}
                     </div>
@@ -811,7 +811,7 @@ const OverDue = () => {
           </div>
         </div>
         {/* Client list section */}
-        <div className="flex justify-between items-center py-4 mt-6 rounded-md ">
+        <div className="flex justify-between items-center py-4 mt-6 rounded-md">
           <h2 className="text-lg">Clients list</h2>
           <div className="flex space-x-4 mr-4">
             <button className="flex items-center gap-2 bg-white text-black px-4 py-2 rounded-md border border-black text-xs font-semibold hover:bg-gray-100 transition-colors duration-200">
@@ -918,7 +918,7 @@ const OverDue = () => {
                 </tr>
               </thead>
               {invoices && (
-                <tbody className="relative">
+                <tbody className="bg-white divide-y divide-gray-200">
                   {invoices.map((invoice, index) => (
                     <tr key={index}  className="border-b last:border-none">
                       <td className="py-2 px-4 ml-9">
@@ -926,7 +926,7 @@ const OverDue = () => {
                           <div className="mr-2 flex">
                             <input
                               type="checkbox"
-                              className="form-checkbox h-6 w-4 text-blue-600 rounded mr-2"
+                              className="form-checkbox h-6 w-4 text-blue-600 rounded mr-"
                               checked={selectedClients.includes(invoice.id)}
                               onChange={(e) =>
                                 handleClientCheckbox(
@@ -946,7 +946,7 @@ const OverDue = () => {
                       </td>
 
                       <td className="py-2 px-4  sm:pl-[3.2rem]">{invoice.status}</td>
-                      <td className="py-2 px-4 sm:pl-[3.4rem]">
+                      <td className="py-2 px-4 whitespace-nowrap sm:pl-[3.4rem]">
                         {new Date(invoice.issueDate).toLocaleDateString(
                           "en-US",
                           {
@@ -956,7 +956,7 @@ const OverDue = () => {
                           }
                         )}
                       </td>
-                      <td className="py-2 px-4 sm:pl-[3.2rem]">
+                      <td className="py-2 px-4 whitespace-nowrap sm:pl-[3.2rem]">
                         {new Date(invoice.dueDate).toLocaleDateString("en-US", {
                           year: "numeric",
                           month: "short",
@@ -993,7 +993,7 @@ const OverDue = () => {
                         {showDropdown === index && (
                           <div
                             onClick={() => toggleDropdown(index)}
-                            className="relative right-[59px] bottom-[5px] mt-2 py-4 px-1 bg-white shadow-md rounded-md z-[-5px]"
+                            className="relative right-[59px] bottom-[5px] mt-2 py-4 px-1 bg-white shadow-md rounded-md"
                           >
                             <button
                               onClick={() => changeStatusToPaid(invoice.id)}

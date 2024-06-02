@@ -150,31 +150,31 @@ const createInvoice = () => {
   };
 
   return (
-    <div className="flex w-full">
+    <div className="flex flex-row md:flex-row">
       {/* paid invoice section */}
-      <div className="md:w-1/6 bg-black text-white">
-        <div className="mt-[3rem] ml-[2rem]">
+      <div className="bg-[#333333] text-white px-4 py-8">
+        <div className="mt-[2rem] ml-[2rem]">
           <div className="ml-4">
             <img src="/KBS.png" alt="Avatar" className="w-[6rem] mr-2" />
           </div>
           <div className="text-sm mt-[5.5rem]">
             <Link href="/payroll">
-              <button className="block px-4 py-2 rounded hover:bg-gray-700">
+              <button className="px-4 py-2 rounded hover:bg-gray-700 flex items-center mt-2">
                 Payroll
               </button>
             </Link>
             <Link href="/transactions">
-              <button className="block mt-[.6rem] px-4 py-2 rounded hover:bg-gray-700">
+              <button className=" mt-[.6rem] flex items-center px-4 py-2 rounded hover:bg-gray-700">
                 Transaction
               </button>
             </Link>
             <Link href="/invoices">
-              <button className="block mt-[.6rem] px-4 py-2 lg:w-[9rem] text-start rounded bg-[#FFD700] text-black hover:bg-[#FFD7]">
+              <button className="mt-[.6rem] px-4 py-2 lg:w-[9rem] text-start rounded bg-[#FFD700] text-black hover:bg-[#FFD7] flex items-center">
                 Invoice
               </button>
             </Link>
             <Link href="/reporting">
-              <button className="block mt-[.6rem] px-4 py-2 rounded hover:bg-gray-700">
+              <button className="mt-[.6rem] px-4 py-2 rounded hover:bg-gray-700 flex items-center">
                 Reporting
               </button>
             </Link>
@@ -608,7 +608,7 @@ const createInvoice = () => {
             </div>
           </div>
           <hr className="mt-[2.4rem] mb-[2.2rem]" />
-          <div className="flex gap-[4rem]">
+          <div className="flex flex-row gap-4 sm:flex-row sm:gap-8">
             <div>
               <label htmlFor="issuedDate" className="block text-black mb-2">
                 Issued date
@@ -618,7 +618,7 @@ const createInvoice = () => {
                 id="issueDate"
                 value={issueDate}
                 onChange={(e) => setIssueDate(e.target.value)}
-                className="appearance-none border-gray-300 border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="appearance-none border-gray-300 border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-full"
                 defaultValue="2024-03-12"
               />
             </div>
@@ -631,7 +631,7 @@ const createInvoice = () => {
                 id="dueDate"
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}
-                className="border-gray-300 appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="appearance-none border-gray-300 border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-full"
                 defaultValue="2024-03-12"
               />
             </div>

@@ -22,8 +22,24 @@ function ResetSuccessful() {
         <p className="text-2xl font-bold mt-4">Check your Inbox</p>
         <p className="mt-2">Link to reset your password has been</p>
         <p className="">sent to <span className="font-bold">kunlekoko@kbs.com</span></p>
-        <Link href='/passwordSuccessfull' className="mt-8 flex items-center px-[6rem] py-2 bg-yellow-400 text-black rounded hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white">
-          Continue <img src="/arrow.png" alt="arrow" className="mt-[.1rem] ml-[.6rem] w-3" />
+        <Link href='/passwordSuccessful' className="mt-8 flex items-center gap-1 px-[6rem] py-2 bg-yellow-400 text-black rounded hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white">
+          Continue 
+          <svg
+              width="14"
+              height="8"
+              viewBox="0 0 14 8"
+              className="mt-1"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M10.3333 1.3335L13 4.00016M13 4.00016L10.3333 6.66683M13 4.00016L1 4.00016"
+                stroke="#333333"
+                stroke-width="1.33333"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
         </Link>
       </div>
     );
