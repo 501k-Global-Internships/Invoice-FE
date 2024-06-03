@@ -76,7 +76,7 @@ const SignUpForm = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 px-4 py-4">
       <h2 className="text-3xl font-bold text-center">Welcome to</h2>
       <h2 className="text-3xl font-bold mb-2 text-center">Kings MoneyBox</h2>
       <h2 className="text-xl font-medium mb-7 text-center">
