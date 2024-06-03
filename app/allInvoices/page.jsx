@@ -3,33 +3,20 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import axios from "../api/axios";
-// import CustomCheckbox from "../customCheckbox";
 
 const OverDue = () => {
   const [invoices, setInvoices] = useState([]);
   const [showDropdown, setShowDropdown] = useState(null);
   const [selectedClients, setSelectedClients] = useState([]);
-
-  const handleSelectAllClients = (checked) => {
-    if (checked) {
-      setSelectedClients(invoices.map((invoice) => invoice.id));
-    } else {
-      setSelectedClients([]);
-    }
-  };
-
-  const handleClientCheckbox = (checked, clientId) => {
-    if (checked) {
-      setSelectedClients([...selectedClients, clientId]);
-    } else {
-      setSelectedClients(selectedClients.filter((id) => id !== clientId));
-    }
-  };
+  const [selectedInvoiceId, setSelectedInvoiceId] = useState("")
 
   const [paidInvoicesCount, setPaidInvoicesCount] = useState("");
   const [unpaidInvoicesCount, setUnpaidInvoicesCount] = useState("");
   const [overdueInvoicesCount, setOverdueInvoicesCount] = useState("");
   const [draftInvoicesCount, setDraftInvoicesCount] = useState("");
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(8);
 
   const errRef = useRef();
   const [errMsg, setErrMsg] = useState("");
@@ -71,22 +58,6 @@ const OverDue = () => {
       } else {
         router.push("/");
       }
-    }
-  };
-
-  const handleCheckboxChange = (invoiceId, checked) => {
-    if (checked) {
-      setCheckedInvoices([...checkedInvoices, invoiceId]);
-    } else {
-      setCheckedInvoices(checkedInvoices.filter((id) => id !== invoiceId));
-    }
-  };
-  const handleSelectAllCheckboxChange = (checked) => {
-    setSelectAllInvoices(checked);
-    if (checked) {
-      setCheckedInvoices(invoices.map((invoice) => invoice.id));
-    } else {
-      setCheckedInvoices([]);
     }
   };
 
@@ -515,6 +486,40 @@ const OverDue = () => {
     getDraftInvoices();
   }, []);
 
+  const handleSelectAllClients = (checked) => {
+    if (checked) {
+      setSelectedClients(invoices.map((invoice) => invoice.id));
+    } else {
+      setSelectedClients([]);
+    }
+  };
+
+  const handleClientCheckbox = (checked, clientId) => {
+    if (checked) {
+      setSelectedClients([...selectedClients, clientId]);
+      setSelectedInvoiceId(clientId)
+    } else {
+      setSelectedClients(selectedClients.filter((id) => id !== clientId));
+    }
+  };
+
+  const handleCheckboxChange = (invoiceId, checked) => {
+    if (checked) {
+      setCheckedInvoices([...checkedInvoices, invoiceId]);
+    } else {
+      setCheckedInvoices(checkedInvoices.filter((id) => id !== invoiceId));
+    }
+  };
+
+  const handleSelectAllCheckboxChange = (checked) => {
+    setSelectAllInvoices(checked);
+    if (checked) {
+      setCheckedInvoices(invoices.map((invoice) => invoice.id));
+    } else {
+      setCheckedInvoices([]);
+    }
+  };
+
   const PaidIcon = () => (
     <div className={`bg-[#8DED85] rounded-full p-2`}>
       <svg
@@ -590,6 +595,7 @@ const OverDue = () => {
       </svg>
     </div>
   );
+
   const invoiceData = [
     { status: "Paid", amount: paidInvoicesCount, icon: <PaidIcon /> },
     { status: "Unpaid", amount: unpaidInvoicesCount, icon: <UnpaidIcon /> },
@@ -606,6 +612,36 @@ const OverDue = () => {
     setShowDropdown(showDropdown === index ? null : index);
   };
 
+  const totalPages = Math.ceil(invoices.length / itemsPerPage);
+  const maxPagesToShow = 5;
+
+  let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+  let endPage = startPage + maxPagesToShow - 1;
+
+  if (endPage > totalPages) {
+    endPage = totalPages;
+    startPage = Math.max(1, endPage - maxPagesToShow + 1);
+  }
+
+  const paginationButtons = [];
+
+  for (let i = startPage; i <= 5; i++) {
+    paginationButtons.push(
+      <button
+        key={i}
+        className={currentPage === i ?
+          'text-black px-3 py-2 rounded-md border-black border hover:bg-gray-100 transition-colors duration-200'
+          : 'text-gray-500 px-3 py-2 hover:bg-gray-100 transition-colors duration-200'}
+        onClick={() => setCurrentPage(i)}
+      >
+        {i}
+      </button>
+    );
+  }
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+
   return (
     <div className="flex h-screen">
       {/* paid invoice section */}
@@ -618,7 +654,7 @@ const OverDue = () => {
             <Link href="/payroll">
               <button className="px-4 py-2 rounded hover:bg-gray-700 flex items-center mt-2">
                 <div className="w-2 mr-2">
-                  <img src="/payrol.png" alt="payrol" width={40}/>
+                  <img src="/payrol.png" alt="payrol" width={40} />
                 </div>
                 Payroll
               </button>
@@ -731,7 +767,6 @@ const OverDue = () => {
                 }}
               />
             </div>
-
             {/* <div className="mr-3">
               <button>
                 <img
@@ -814,7 +849,9 @@ const OverDue = () => {
         <div className="flex justify-between items-center py-4 mt-6 rounded-md">
           <h2 className="text-lg">Clients list</h2>
           <div className="flex space-x-4 mr-4">
-            <button className="flex items-center gap-2 bg-white text-black px-4 py-2 rounded-md border border-black text-xs font-semibold hover:bg-gray-100 transition-colors duration-200">
+            <button
+              onClick={() => downloadInvoice(selectedInvoiceId)}
+              className="flex items-center gap-2 bg-white text-black px-4 py-2 rounded-md border border-black text-xs font-semibold hover:bg-gray-100 transition-colors duration-200">
               <div>
                 <svg
                   width="10"
@@ -833,7 +870,9 @@ const OverDue = () => {
               </div>
               Print Invoice
             </button>
-            <button className="flex gap-2 items-center bg-white px-4 py-2 rounded-md border border-black text-xs font-semibold hover:bg-gray-100 transition-colors duration-200">
+            <button
+              onClick={() => downloadInvoice(selectedInvoiceId)}
+              className="flex gap-2 items-center bg-white px-4 py-2 rounded-md border border-black text-xs font-semibold hover:bg-gray-100 transition-colors duration-200">
               <div>
                 <svg
                   width="10"
@@ -919,8 +958,8 @@ const OverDue = () => {
               </thead>
               {invoices && (
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {invoices.map((invoice, index) => (
-                    <tr key={index}  className="border-b last:border-none">
+                  {invoices.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((invoice, index) => (
+                    <tr key={index} className="border-b last:border-none">
                       <td className="py-2 px-4 ml-9">
                         <div className="flex items-center">
                           <div className="mr-2 flex">
@@ -1111,7 +1150,10 @@ const OverDue = () => {
         </div>
         {/* Pagination */}
         <div className="flex justify-center items-center space-x-2 mt-[2rem] mb-7">
-          <button className="bg-white text-gray-700 px-3 py-2 border border-gray-300 rounded hover:bg-gray-100 transition-colors duration-200">
+          <button
+            className="bg-white text-gray-700 px-3 py-2 border border-gray-300 rounded hover:bg-gray-100 transition-colors duration-200"
+            onClick={() => setCurrentPage(currentPage - 1)}
+            disabled={currentPage === 1}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5"
@@ -1125,22 +1167,11 @@ const OverDue = () => {
               />
             </svg>
           </button>
-          <button className=" text-gray-500 px-3 py-2 hover:bg-gray-100 transition-colors duration-200">
-            1
-          </button>
-          <button className=" text-gray-500 px-3 py-2 hover:bg-gray-100 transition-colors duration-200">
-            2
-          </button>
-          <button className=" text-black px-3 py-2 rounded-md border-black border hover:bg-gray-100 transition-colors duration-200">
-            3
-          </button>
-          <button className=" text-gray-500 px-3 py-2 hover:bg-gray-100 transition-colors duration-200">
-            4
-          </button>
-          <button className=" text-gray-500 px-3 py-2 rounded hover:bg-gray-100 transition-colors duration-200">
-            5
-          </button>
-          <button className=" text-black px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+          {paginationButtons}
+          <button
+            className=" text-black px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+            onClick={() => setCurrentPage(currentPage + 1)}
+            disabled={currentPage === totalPages}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5"
@@ -1155,6 +1186,10 @@ const OverDue = () => {
             </svg>
           </button>
         </div>
+        <p>{`Showing invoices ${indexOfFirstItem + 1} to ${Math.min(
+          indexOfLastItem,
+          invoices.length
+        )} of ${invoices.length}`}</p>
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import React, { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import axios from "../api/axios";
+import { auth, provider, signInWithPopup } from '../../config/firebaseConfig';
 
 const SignUpForm = () => {
   const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
@@ -25,7 +26,7 @@ const SignUpForm = () => {
 
   const [errMsg, setErrMsg] = useState("");
   const router = useRouter();
-  
+
   const handleTogglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
@@ -56,10 +57,6 @@ const SignUpForm = () => {
         withCredentials: true,
       });
       localStorage.setItem("token", response?.data?.token);
-
-      const token = response?.data?.token;
-
-      // setAuth({ email, password, token });
       router.push("/");
     } catch (err) {
       if (!err?.response) {
@@ -72,6 +69,30 @@ const SignUpForm = () => {
         setErrMsg("Registration Failed!");
       }
       errRef.current.focus();
+    }
+  };
+
+  const signInWithGoogle = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const name = result?.user.displayName
+      const email = result?.user.email
+      const response = await axios.post('auth_sign_in',
+        JSON.stringify({ name, email }),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          withCredentials: true
+        }
+      );
+      localStorage.setItem("token", response?.data?.token);
+      localStorage.setItem("name", response?.data?.name);
+      localStorage.setItem("kbsEmail", response?.data?.email);
+
+      router.push("/allInvoices");
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -202,7 +223,7 @@ const SignUpForm = () => {
               placeholder="Confirm password"
             />
             <div className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
-            <FontAwesomeIcon
+              <FontAwesomeIcon
                 icon={confirmPasswordVisible ? faEye : faEyeSlash}
                 className="text-gray-500"
                 onClick={handleToggleConfirmPasswordVisibility}
@@ -244,15 +265,14 @@ const SignUpForm = () => {
         <button
           type="button"
           className="flex items-center justify-center gap-3 text-[#FFE86B]"
-        >
+          onClick={signInWithGoogle}>
           Sign up with Google
           <svg
             width="14"
             height="8"
             viewBox="0 0 14 8"
             fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
+            xmlns="http://www.w3.org/2000/svg">
             <path
               d="M10.3333 1.3335L13 4.00016M13 4.00016L10.3333 6.66683M13 4.00016L1 4.00016"
               stroke="#FFE86B"

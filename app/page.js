@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 import axios from "./api/axios";
+import { auth, provider, signInWithPopup } from '../config/firebaseConfig';
 
 const LoginForm = () => {
   const [password, setPassword] = useState("");
@@ -54,6 +55,30 @@ const LoginForm = () => {
         setErrMsg("Login Failed!");
       }
       errRef.current.focus();
+    }
+  };
+
+  const signInWithGoogle = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const name = result?.user.displayName
+      const email = result?.user.email
+      const response = await axios.post('auth_sign_in',
+        JSON.stringify({ name, email }),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          withCredentials: true
+        }
+      );
+      localStorage.setItem("token", response?.data?.token);
+      localStorage.setItem("name", response?.data?.name);
+      localStorage.setItem("kbsEmail", response?.data?.email);
+
+      router.push("/allInvoices");
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -157,6 +182,7 @@ const LoginForm = () => {
         <button
           type="button"
           className="flex items-center justify-center gap-3 text-[#FFE86B]"
+          onClick={signInWithGoogle}
         >
           Sign up with Google
           <svg
