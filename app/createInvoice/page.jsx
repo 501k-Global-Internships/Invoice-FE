@@ -38,6 +38,7 @@ const createInvoice = () => {
   const total = ((subTotal - discount) + Number(tax));
 
   const [errMsg, setErrMsg] = useState('');
+  const [errors, setErrors] = useState({});
   const errRef = useRef();
   const router = useRouter();
 
@@ -54,6 +55,13 @@ const createInvoice = () => {
     const newItems = [...items];
     newItems[index][id] = value;
 
+    if (errors.items) {
+      const itemErrors = errors.items.map((itemError, idx) =>
+        idx === index ? { ...itemError, [id]: false } : itemError
+      );
+      setErrors((prev) => ({ ...prev, items: itemErrors }));
+    }
+
     // Calculate the amount if quantity or price changes
     if (id === 'quantity' || id === 'price') {
       const quantity = newItems[index].quantity ? parseFloat(newItems[index].quantity) : 0;
@@ -68,12 +76,16 @@ const createInvoice = () => {
     const value = e.target.value;
     const calculatedDiscount = (parseFloat(value) * (subTotal / 100)).toString();
     setDiscount(calculatedDiscount);
+
+    if (errors.discount) setErrors((prev) => ({ ...prev, discount: false }));
   };
 
   const handleTaxChange = (e) => {
     const value = e.target.value;
     const calculatedTax = (parseFloat(value) * (subTotal / 100)).toString();
     setTax(calculatedTax);
+
+    if (errors.tax) setErrors((prev) => ({ ...prev, tax: false }));
   };
 
   useEffect(() => {
@@ -83,6 +95,40 @@ const createInvoice = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const newErrors = {};
+    if (!name) newErrors.name = true;
+    if (!email) newErrors.email = true;
+    if (!customerName) newErrors.customerName = true;
+    if (!billingAddress) newErrors.billingAddress = true;
+    if (!phoneNumber) newErrors.phoneNumber = true;
+    if (!customerEmail) newErrors.customerEmail = true;
+    if (!invoiceTitle) newErrors.invoiceTitle = true;
+    if (!paymentCurrency) newErrors.paymentCurrency = true;
+    if (!accountName) newErrors.accountName = true;
+    if (!accountNumber) newErrors.accountNumber = true;
+    if (!bankName) newErrors.bankName = true;
+    if (!issueDate) newErrors.issueDate = true;
+    if (!dueDate) newErrors.dueDate = true;
+    if (!discount) newErrors.discount = true;
+    if (!tax) newErrors.tax = true;
+
+
+    const itemErrors = items.map((item) => ({
+      itemDescription: !item.itemDescription,
+      quantity: !item.quantity,
+      price: !item.price,
+    }));
+
+    if (itemErrors.some(error => Object.values(error).includes(true))) {
+      newErrors.items = itemErrors;
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
     const payload = {
       items, name, email, customerName, billingAddress, phoneNumber, customerEmail,
       invoiceTitle, paymentCurrency, additionalInfo, accountName, accountNumber,
@@ -117,6 +163,40 @@ const createInvoice = () => {
 
   const draftInvoice = async (e) => {
     e.preventDefault();
+
+    const newErrors = {};
+    if (!name) newErrors.name = true;
+    if (!email) newErrors.email = true;
+    if (!customerName) newErrors.customerName = true;
+    if (!billingAddress) newErrors.billingAddress = true;
+    if (!phoneNumber) newErrors.phoneNumber = true;
+    if (!customerEmail) newErrors.customerEmail = true;
+    if (!invoiceTitle) newErrors.invoiceTitle = true;
+    if (!paymentCurrency) newErrors.paymentCurrency = true;
+    if (!accountName) newErrors.accountName = true;
+    if (!accountNumber) newErrors.accountNumber = true;
+    if (!bankName) newErrors.bankName = true;
+    if (!issueDate) newErrors.issueDate = true;
+    if (!dueDate) newErrors.dueDate = true;
+    if (!discount) newErrors.discount = true;
+    if (!tax) newErrors.tax = true;
+
+
+    const itemErrors = items.map((item) => ({
+      itemDescription: !item.itemDescription,
+      quantity: !item.quantity,
+      price: !item.price,
+    }));
+
+    if (itemErrors.some(error => Object.values(error).includes(true))) {
+      newErrors.items = itemErrors;
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
     const payload = {
       items, name, email, customerName, billingAddress, phoneNumber, customerEmail,
       invoiceTitle, paymentCurrency, additionalInfo, accountName, accountNumber,
@@ -330,8 +410,11 @@ const createInvoice = () => {
               name="name"
               placeholder="e.g Adamo Nosiru Olamilekan"
               value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="shadow-md rounded p-2 mb-4 ml-5 w-[38rem] focus:outline-none"
+              onChange={(e) => {
+                setName(e.target.value);
+                if (errors.name) setErrors((prev) => ({ ...prev, name: false }));
+              }}
+              className={`border rounded p-2 mb-4 ml-5 w-[38rem] focus:outline-none ${errors.name ? 'border-red-500' : ''}`}
             />
             <label htmlFor="email" className="mb-2 ml-5">
               Email
@@ -342,8 +425,11 @@ const createInvoice = () => {
               name="email"
               placeholder="e.g leronaldo@gmail.com"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="border rounded p-2 mb-4 ml-5 w-[50rem] focus:outline-none"
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (errors.email) setErrors((prev) => ({ ...prev, email: false }));
+              }}
+              className={`border rounded p-2 mb-4 ml-5 w-[50rem] focus:outline-none ${errors.email ? 'border-red-500' : ''}`}
             />
           </form>
         </div>
@@ -366,8 +452,11 @@ const createInvoice = () => {
               name="email"
               placeholder="enter customer name..."
               value={customerName}
-              onChange={(e) => setCustomerName(e.target.value)}
-              className=" rounded p-2 w-[38rem] ml-5 border-2 focus:outline-none"
+              onChange={(e) => {
+                setCustomerName(e.target.value);
+                if (errors.customerName) setErrors((prev) => ({ ...prev, customerName: false }));
+              }}
+              className={`rounded p-2 w-[38rem] ml-5 border focus:outline-none ${errors.customerName ? 'border-red-500' : ''}`}
             />
             <label htmlFor="billingAddress" className="ml-5 mt-3">
               Billing Address
@@ -377,13 +466,16 @@ const createInvoice = () => {
               name="billingAddress"
               placeholder="e.g Suite 10, Admiralty Way, Victoria Island, Lagos State, Nigeria"
               value={billingAddress}
-              onChange={(e) => setBillingAddress(e.target.value)}
-              className="border-2 rounded p-2 h-24 w-[64rem] ml-5 focus:outline-none"
+              onChange={(e) => {
+                setBillingAddress(e.target.value);
+                if (errors.billingAddress) setErrors((prev) => ({ ...prev, billingAddress: false }));
+              }}
+              className={`border rounded p-2 h-24 w-[64rem] ml-5 focus:outline-none ${errors.billingAddress ? 'border-red-500' : ''}`}
             />
             <label htmlFor="phoneNumber" className="block ml-5">
               Telephone Number
             </label>
-            <div className="flex items-center border-2 rounded p-2 w-[50rem] ml-5">
+            <div className={`flex items-center border rounded p-2 w-[50rem] ml-5 ${errors.phoneNumber ? 'border-red-500' : ''}`}>
               <span className="px-2 text-gray-500">
                 <svg
                   width="20"
@@ -407,14 +499,17 @@ const createInvoice = () => {
                 name="phoneNumber"
                 placeholder="e.g 090xxxxxxx"
                 value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                className=" focus:outline-none"
+                onChange={(e) => {
+                  setPhoneNumber(e.target.value);
+                  if (errors.phoneNumber) setErrors((prev) => ({ ...prev, phoneNumber: false }));
+                }}
+                className="focus:outline-none"
               />
             </div>
             <label htmlFor="email" className="w-[34rem] ml-5">
               Email Address
             </label>
-            <div className="flex items-center border-2 rounded p-2 w-[50rem] ml-5 mb-9">
+            <div className={`flex items-center border rounded p-2 w-[50rem] ml-5 mb-9 ${errors.customerEmail ? 'border-red-500' : ''}`}>
               <span className="px-2 text-gray-500">
                 <svg
                   width="20"
@@ -438,7 +533,10 @@ const createInvoice = () => {
                 name="email"
                 placeholder="e.g leronaldio@gmail.com"
                 value={customerEmail}
-                onChange={(e) => setCustomerEmail(e.target.value)}
+                onChange={(e) => {
+                  setCustomerEmail(e.target.value);
+                  if (errors.customerEmail) setErrors((prev) => ({ ...prev, customerEmail: false }));
+                }}
                 className="focus:outline-none"
               />
             </div>
@@ -458,8 +556,11 @@ const createInvoice = () => {
               type="text"
               id="invoiceTitle"
               value={invoiceTitle}
-              onChange={(e) => setInvoiceTitle(e.target.value)}
-              className="shadow appearance-none w-[34rem] border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              onChange={(e) => {
+                setInvoiceTitle(e.target.value);
+                if (errors.invoiceTitle) setErrors((prev) => ({ ...prev, invoiceTitle: false }));
+              }}
+              className={`shadow appearance-none w-[34rem] border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.invoiceTitle ? 'border-red-500' : ''}`}
               placeholder="e.g Payment for 2 units of Dell E7240 laptops"
             />
           </div>
@@ -469,9 +570,12 @@ const createInvoice = () => {
             </label>
             <select
               value={paymentCurrency}
-              onChange={(e) => setPaymentCurrency(e.target.value)}
+              onChange={(e) => {
+                setPaymentCurrency(e.target.value);
+                if (errors.paymentCurrency) setErrors((prev) => ({ ...prev, paymentCurrency: false }));
+              }}
               id="paymentCurrency"
-              className="shadow appearance-none border rounded w-[34rem] py-2 px-3 text-gray-400 leading-tight focus:outline-none focus:shadow-outline"
+              className={`shadow appearance-none w-[34rem] border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.paymentCurrency ? 'border-red-500' : ''}`}
             >
               <option value="">Select...</option>
               <option value="NGN" className="text-gray-600">NGN</option>
@@ -490,8 +594,9 @@ const createInvoice = () => {
                   type="text"
                   id="itemDescription"
                   value={item.itemDescription}
-                  onChange={(e) => handleItemsInputChange(index, e)}
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  onChange={(e) => { handleItemsInputChange(index, e) }}
+                  className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline 
+                    ${errors.items && errors.items[index] && errors.items[index].itemDescription ? 'border-red-500' : ''}`}
                   placeholder="e.g US Dollar"
                 />
               </div>
@@ -504,7 +609,8 @@ const createInvoice = () => {
                   id="quantity"
                   value={item.quantity}
                   onChange={(e) => handleItemsInputChange(index, e)}
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline 
+                    ${errors.items && errors.items[index] && errors.items[index].quantity ? 'border-red-500' : ''}`}
                   placeholder="e.g 5"
                 />
               </div>
@@ -517,7 +623,8 @@ const createInvoice = () => {
                   id="price"
                   value={item.price}
                   onChange={(e) => handleItemsInputChange(index, e)}
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline 
+                    ${errors.items && errors.items[index] && errors.items[index].price ? 'border-red-500' : ''}`}
                   placeholder="e.g 50"
                 />
               </div>
@@ -571,8 +678,11 @@ const createInvoice = () => {
                   type="text"
                   id="accountName"
                   value={accountName}
-                  onChange={(e) => setAccountName(e.target.value)}
-                  className="shadow appearance-none border rounded w-[13rem] py-2 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ml-3"
+                  onChange={(e) => {
+                    setAccountName(e.target.value);
+                    if (errors.accountName) setErrors((prev) => ({ ...prev, accountName: false }));
+                  }}
+                  className={`shadow appearance-none border rounded w-[13rem] py-2 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ml-3 ${errors.accountName ? 'border-red-500' : ''}`}
                   placeholder="e.g KBM Enterprise"
                 />
               </div>
@@ -587,8 +697,11 @@ const createInvoice = () => {
                   type="text"
                   id="accountNumber"
                   value={accountNumber}
-                  onChange={(e) => setAccountNumber(e.target.value)}
-                  className="shadow appearance-none border rounded w-[13rem] py-2 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ml-2"
+                  onChange={(e) => {
+                    setAccountNumber(e.target.value);
+                    if (errors.accountNumber) setErrors((prev) => ({ ...prev, accountNumber: false }));
+                  }}
+                  className={`shadow appearance-none border rounded w-[13rem] py-2 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ml-2  ${errors.accountName ? 'border-red-500' : ''}`}
                   placeholder="e.g KBM Enterprise"
                 />
               </div>
@@ -600,8 +713,11 @@ const createInvoice = () => {
                   type="text"
                   id="bankName"
                   value={bankName}
-                  onChange={(e) => setBankName(e.target.value)}
-                  className="shadow appearance-none border rounded w-[13rem] py-2 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ml-3"
+                  onChange={(e) => {
+                    setBankName(e.target.value);
+                    if (errors.bankName) setErrors((prev) => ({ ...prev, bankName: false }));
+                  }}
+                  className={`shadow appearance-none border rounded w-[13rem] py-2 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ml-3 ${errors.bankName ? 'border-red-500' : ''}`}
                   placeholder="e.g KBM Enterprise"
                 />
               </div>
@@ -617,8 +733,11 @@ const createInvoice = () => {
                 type="date"
                 id="issueDate"
                 value={issueDate}
-                onChange={(e) => setIssueDate(e.target.value)}
-                className="appearance-none border-gray-300 border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-full"
+                onChange={(e) => {
+                  setIssueDate(e.target.value);
+                  if (errors.issueDate) setErrors((prev) => ({ ...prev, issueDate: false }));
+                }}
+                className={`appearance-none border-gray-300 border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-full ${errors.issueDate ? 'border-red-500' : ''}`}
                 defaultValue="2024-03-12"
               />
             </div>
@@ -630,8 +749,11 @@ const createInvoice = () => {
                 type="date"
                 id="dueDate"
                 value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-                className="appearance-none border-gray-300 border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-full"
+                onChange={(e) => {
+                  setDueDate(e.target.value);
+                  if (errors.dueDate) setErrors((prev) => ({ ...prev, dueDate: false }));
+                }}
+                className={`appearance-none border-gray-300 border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-full ${errors.dueDate ? 'border-red-500' : ''}`}
                 defaultValue="2024-03-12"
               />
             </div>
@@ -659,7 +781,7 @@ const createInvoice = () => {
               id="discount"
               onChange={handleDiscountChange}
               placeholder="%"
-              className="w-[8.6rem] mr-[2rem] border border-gray-300 text-end rounded-md px-2 py-1 focus:outline-none"
+              className={`w-[8.6rem] mr-[2rem] border border-gray-300 text-end rounded-md px-2 py-1 focus:outline-none ${errors.discount ? 'border-red-500' : ''}`}
             />
             <input
               type="text"
@@ -679,7 +801,7 @@ const createInvoice = () => {
               id="tax"
               placeholder="%"
               onChange={handleTaxChange}
-              className="w-[8.6rem] mr-[2rem] border border-gray-300 text-end rounded-md px-2 py-1 focus:outline-none"
+              className={`w-[8.6rem] mr-[2rem] border border-gray-300 text-end rounded-md px-2 py-1 focus:outline-none ${errors.tax ? 'border-red-500' : ''}`}
             />
             <input
               type="text"
