@@ -31,14 +31,26 @@ const OverDue = () => {
   useEffect(() => {
     const email = localStorage.getItem("kbsEmail");
     const fullName = localStorage.getItem("name");
+  
     if (fullName) {
-      const lastName = fullName.split(" ")[1];
-      const nameAbbr = `${fullName.charAt(0)}${lastName.charAt(0)}`;
+      const nameParts = fullName.split(" ");
+      let nameAbbr;
+  
+      if (nameParts.length === 1) {
+        nameAbbr = fullName.charAt(0).toUpperCase();
+      } else {
+        const firstName = nameParts[0];
+        const lastName = nameParts[1];
+        nameAbbr = `${firstName.charAt(0).toUpperCase()}${lastName.charAt(0).toUpperCase()}`;
+      }
+  
       setNameAbbr(nameAbbr);
     }
+  
     setEmail(email);
     setFullName(fullName);
   }, []);
+  
 
   const getInvoices = async () => {
     try {

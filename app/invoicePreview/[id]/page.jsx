@@ -7,18 +7,14 @@ import { useRouter } from 'next/navigation'
 import LoadingSpinner from '../../loadingSpinner';
 
 const InvoicePreview = () => {
-  // Define the state for storing the dropped image file
   const [imageFile, setImageFile] = useState(null);
-  // Define the onDrop function to handle file drops
-  const onDrop = (acceptedFiles) => {
-    // Update the imageFile state with the dropped file
-    setImageFile(acceptedFiles[0]);
-  };
+  const [brandLogo, setBrandLogo] = useState("");
+
   const [invoice, setInvoice] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [customerName, setCustomerName] = useState("");
 
+  const [customerName, setCustomerName] = useState("");
   const [billingAddress, setBillingAddress] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
@@ -91,10 +87,77 @@ const InvoicePreview = () => {
     setSubTotal(total);
   }, [items]);
 
+  useEffect(() => {
+    const getInvoice = async () => {
+      const id = window.location.href.split("/")[4];
+
+      try {
+        const response = await axios.get(`/invoice/${id}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + localStorage.getItem('token'),
+          },
+          withCredentials: true
+        });
+
+        console.log(response.data);
+        const issueDate = new Date(response.data.issueDate);
+        const dueDate = new Date(response.data.dueDate);
+        const formattedIssueDate = issueDate.toISOString().split('T')[0];
+        const formattedDueDate = dueDate.toISOString().split('T')[0];
+        setInvoice(response.data);
+        setBrandLogo(response.data.brandLogo)
+        setName(response.data.name)
+        setEmail(response.data.email)
+        setCustomerName(response.data.customerName)
+        setCustomerName(response.data.customerName)
+        setBillingAddress(response.data.billingAddress)
+        setPhoneNumber(response.data.phoneNumber)
+        setCustomerEmail(response.data.customerEmail)
+        setInvoiceTitle(response.data.invoiceTitle)
+        setPaymentCurrency(response.data.paymentCurrency)
+        setItems(response.data.items)
+        setAdditionalInfo(response.data.additionalInfo)
+        setAccountName(response.data.accountName)
+        setAccountNumber(response.data.accountNumber)
+        setBankName(response.data.bankName)
+        setIssueDate(formattedIssueDate)
+        setDueDate(formattedDueDate)
+        setDiscount(response.data.discount)
+        setTax(response.data.tax)
+      } catch (err) {
+        console.error(err);
+        navigate('/sign-in', { state: { from: location }, replace: true });
+      }
+    }
+
+    const fetchData = async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      setLoading(false);
+    };
+
+    getInvoice();
+    fetchData();
+  }, []);
+
+  const onDrop = async (acceptedFiles) => {
+    const file = acceptedFiles[0];
+    setImageFile(file);
+
+    try {
+      const storageRef = ref(storage, `images/${file.name}`);
+      await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(storageRef);
+      setBrandLogo(url);
+    } catch (error) {
+      console.error('Error uploading image: ', error);
+    }
+  };
+
   const handleEditInvoice = async (e) => {
     e.preventDefault();
     const payload = {
-      items, name, email, customerName, billingAddress, phoneNumber, customerEmail,
+      items, brandLogo, name, email, customerName, billingAddress, phoneNumber, customerEmail,
       invoiceTitle, paymentCurrency, additionalInfo, accountName, accountNumber,
       bankName, issueDate, dueDate, discount, tax,
     }
@@ -151,58 +214,6 @@ const InvoicePreview = () => {
     }
   };
 
-  useEffect(() => {
-    const getInvoice = async () => {
-      const id = window.location.href.split("/")[4];
-
-      try {
-        const response = await axios.get(`/invoice/${id}`, {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + localStorage.getItem('token'),
-          },
-          withCredentials: true
-        });
-
-        console.log(response.data);
-        const issueDate = new Date(response.data.issueDate);
-        const dueDate = new Date(response.data.dueDate);
-        const formattedIssueDate = issueDate.toISOString().split('T')[0];
-        const formattedDueDate = dueDate.toISOString().split('T')[0];
-        setInvoice(response.data);
-        setName(response.data.name)
-        setEmail(response.data.email)
-        setCustomerName(response.data.customerName)
-        setCustomerName(response.data.customerName)
-        setBillingAddress(response.data.billingAddress)
-        setPhoneNumber(response.data.phoneNumber)
-        setCustomerEmail(response.data.customerEmail)
-        setInvoiceTitle(response.data.invoiceTitle)
-        setPaymentCurrency(response.data.paymentCurrency)
-        setItems(response.data.items)
-        setAdditionalInfo(response.data.additionalInfo)
-        setAccountName(response.data.accountName)
-        setAccountNumber(response.data.accountNumber)
-        setBankName(response.data.bankName)
-        setIssueDate(formattedIssueDate)
-        setDueDate(formattedDueDate)
-        setDiscount(response.data.discount)
-        setTax(response.data.tax)
-      } catch (err) {
-        console.error(err);
-        navigate('/sign-in', { state: { from: location }, replace: true });
-      }
-    }
-
-    const fetchData = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      setLoading(false);
-    };
-
-    getInvoice();
-    fetchData();
-  }, []);
-
   return (
     <div className="">
       {loading ?
@@ -248,61 +259,61 @@ const InvoicePreview = () => {
                         })}
                       >
                         <input {...getInputProps()} />
-                        <div className="flex flex-col items-center mt-[3rem]">
-                          <svg
-                            width="20"
-                            height="20"
-                            viewBox="0 0 20 20"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <mask
-                              id="mask0_2614_2818"
-                              style={{ maskType: "luminance" }}
-                              maskUnits="userSpaceOnUse"
-                              x="0"
-                              y="0"
-                              width="20"
-                              height="20"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                clipRule="evenodd"
-                                d="M0.000488281 0H19.9601V19.9498H0.000488281V0Z"
-                                fill="white"
-                              />
-                            </mask>
-                            <g mask="url(#mask0_2614_2818)">
-                              <path
-                                fillRule="evenodd"
-                                clipRule="evenodd"
-                                d="M5.65049 1.5C3.12949 1.5 1.50049 3.227 1.50049 5.899V14.051C1.50049 16.724 3.12949 18.45 5.65049 18.45H14.3005C16.8275 18.45 18.4605 16.724 18.4605 14.051V5.899C18.4605 3.227 16.8275 1.5 14.3005 1.5H5.65049ZM14.3005 19.95H5.65049C2.27049 19.95 0.000488281 17.579 0.000488281 14.051V5.899C0.000488281 2.371 2.27049 0 5.65049 0H14.3005C17.6855 0 19.9605 2.371 19.9605 5.899V14.051C19.9605 17.579 17.6855 19.95 14.3005 19.95Z"
-                                fill="#AFB1B6"
-                              />
-                            </g>
-                            <path
-                              fillRule="evenodd"
-                              clipRule="evenodd"
-                              d="M3.28126 15.1799C3.09526 15.1799 2.91026 15.1119 2.76526 14.9739C2.46426 14.6899 2.45226 14.2139 2.73726 13.9149L4.26526 12.3019C5.07426 11.4429 6.43926 11.4009 7.30226 12.2109L8.26026 13.1829C8.52726 13.4529 8.96126 13.4579 9.22926 13.1939C9.33026 13.0749 11.5083 10.4299 11.5083 10.4299C11.9223 9.92789 12.5063 9.61789 13.1553 9.55389C13.8053 9.49689 14.4363 9.68589 14.9393 10.0989C14.9823 10.1339 15.0213 10.1679 17.2173 12.4229C17.5063 12.7189 17.5013 13.1939 17.2043 13.4829C16.9083 13.7739 16.4323 13.7649 16.1433 13.4689C16.1433 13.4689 14.0943 11.3659 13.9483 11.2239C13.7933 11.0969 13.5443 11.0229 13.2993 11.0469C13.0503 11.0719 12.8263 11.1909 12.6673 11.3839C10.3433 14.2029 10.3153 14.2299 10.2773 14.2669C9.41926 15.1089 8.03426 15.0949 7.19126 14.2349C7.19126 14.2349 6.26126 13.2909 6.24526 13.2719C6.01426 13.0579 5.60226 13.0719 5.35526 13.3329L3.82526 14.9459C3.67726 15.1019 3.47926 15.1799 3.28126 15.1799Z"
-                              fill="#AFB1B6"
-                            />
-                            <path
-                              fillRule="evenodd"
-                              clipRule="evenodd"
-                              d="M6.55769 6.12891C6.00469 6.12891 5.55469 6.57891 5.55469 7.13291C5.55469 7.68691 6.00469 8.13791 6.55869 8.13791C7.11269 8.13791 7.56369 7.68691 7.56369 7.13291C7.56369 6.57991 7.11269 6.12991 6.55769 6.12891ZM6.55869 9.63791C5.17769 9.63791 4.05469 8.51391 4.05469 7.13291C4.05469 5.75191 5.17769 4.62891 6.55869 4.62891C7.94069 4.62991 9.06369 5.75391 9.06369 7.13291C9.06369 8.51391 7.93969 9.63791 6.55869 9.63791Z"
-                              fill="#AFB1B6"
-                            />
-                          </svg>
-                          <div className="text-gray-600 text-sm text-center mt-3">
+                        {imageFile || brandLogo ? (
+                          <div>
+                            <img src={imageFile ? URL.createObjectURL(imageFile) : brandLogo ? brandLogo : ''} alt="Uploaded preview" />
+                          </div>
+                        ) : (
+                          <div className="text-gray-600 text-sm text-center">
+                            <div className="flex flex-col items-center">
+                              <svg
+                                width="20"
+                                height="20"
+                                viewBox="0 0 20 20"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <mask
+                                  id="mask0_2614_2818"
+                                  style={{ maskType: "luminance" }}
+                                  maskUnits="userSpaceOnUse"
+                                  x="0"
+                                  y="0"
+                                  width="20"
+                                  height="20"
+                                >
+                                  <path
+                                    fillRule="evenodd"
+                                    clipRule="evenodd"
+                                    d="M0.000488281 0H19.9601V19.9498H0.000488281V0Z"
+                                    fill="white"
+                                  />
+                                </mask>
+                                <g mask="url(#mask0_2614_2818)">
+                                  <path
+                                    fillRule="evenodd"
+                                    clipRule="evenodd"
+                                    d="M5.65049 1.5C3.12949 1.5 1.50049 3.227 1.50049 5.899V14.051C1.50049 16.724 3.12949 18.45 5.65049 18.45H14.3005C16.8275 18.45 18.4605 16.724 18.4605 14.051V5.899C18.4605 3.227 16.8275 1.5 14.3005 1.5H5.65049ZM14.3005 19.95H5.65049C2.27049 19.95 0.000488281 17.579 0.000488281 14.051V5.899C0.000488281 2.371 2.27049 0 5.65049 0H14.3005C17.6855 0 19.9605 2.371 19.9605 5.899V14.051C19.9605 17.579 17.6855 19.95 14.3005 19.95Z"
+                                    fill="#AFB1B6"
+                                  />
+                                </g>
+                                <path
+                                  fillRule="evenodd"
+                                  clipRule="evenodd"
+                                  d="M3.28126 15.1799C3.09526 15.1799 2.91026 15.1119 2.76526 14.9739C2.46426 14.6899 2.45226 14.2139 2.73726 13.9149L4.26526 12.3019C5.07426 11.4429 6.43926 11.4009 7.30226 12.2109L8.26026 13.1829C8.52726 13.4529 8.96126 13.4579 9.22926 13.1939C9.33026 13.0749 11.5083 10.4299 11.5083 10.4299C11.9223 9.92789 12.5063 9.61789 13.1553 9.55389C13.8053 9.49689 14.4363 9.68589 14.9393 10.0989C14.9823 10.1339 15.0213 10.1679 17.2173 12.4229C17.5063 12.7189 17.5013 13.1939 17.2043 13.4829C16.9083 13.7739 16.4323 13.7649 16.1433 13.4689C16.1433 13.4689 14.0943 11.3659 13.9483 11.2239C13.7933 11.0969 13.5443 11.0229 13.2993 11.0469C13.0503 11.0719 12.8263 11.1909 12.6673 11.3839C10.3433 14.2029 10.3153 14.2299 10.2773 14.2669C9.41926 15.1089 8.03426 15.0949 7.19126 14.2349C7.19126 14.2349 6.26126 13.2909 6.24526 13.2719C6.01426 13.0579 5.60226 13.0719 5.35526 13.3329L3.82526 14.9459C3.67726 15.1019 3.47926 15.1799 3.28126 15.1799Z"
+                                  fill="#AFB1B6"
+                                />
+                                <path
+                                  fillRule="evenodd"
+                                  clipRule="evenodd"
+                                  d="M6.55769 6.12891C6.00469 6.12891 5.55469 6.57891 5.55469 7.13291C5.55469 7.68691 6.00469 8.13791 6.55869 8.13791C7.11269 8.13791 7.56369 7.68691 7.56369 7.13291C7.56369 6.57991 7.11269 6.12991 6.55769 6.12891ZM6.55869 9.63791C5.17769 9.63791 4.05469 8.51391 4.05469 7.13291C4.05469 5.75191 5.17769 4.62891 6.55869 4.62891C7.94069 4.62991 9.06369 5.75391 9.06369 7.13291C9.06369 8.51391 7.93969 9.63791 6.55869 9.63791Z"
+                                  fill="#AFB1B6"
+                                />
+                              </svg>
+                            </div>
                             <p className="mb-1">Upload or drag your brand</p>
                             <p>logo here</p>
                           </div>
-                        </div>
-                        {imageFile && (
-                          <img
-                            src={URL.createObjectURL(imageFile)}
-                            alt="Uploaded preview"
-                          />
                         )}
                       </div>
                     )}
