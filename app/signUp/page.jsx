@@ -145,7 +145,7 @@ const SignUpForm = () => {
               id="name"
               onChange={(e) => setName(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Name"
+              placeholder="Enter your full name"
             />
           </div>
           <div className="mb-4">
@@ -165,7 +165,7 @@ const SignUpForm = () => {
               onChange={handleChange}
               value={password}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
-              placeholder="Password"
+              placeholder="Enter your password"
             />
             <div className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
               <FontAwesomeIcon

@@ -10,7 +10,11 @@
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
+<<<<<<< HEAD
     "@emotion/styled": "^11.11.5",
+=======
+    "@firebase/storage": "^0.12.5",
+>>>>>>> 2224b7298175652298df5df0a6e5fab96ea61085
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@netlify/functions": "^2.7.0",
