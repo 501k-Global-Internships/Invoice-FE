@@ -244,7 +244,7 @@ const InvoicePreview = () => {
         <LoadingSpinner loading={loading} />
       ) : (
         <div className="sm:h-full p-4 sm:p-8">
-          <div className="flex flex-col mt-[7rem]">
+          <div className="flex flex-col">
             <p
               ref={errRef}
               className={errMsg ? "errmsg" : "offscreen"}

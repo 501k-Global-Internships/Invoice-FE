@@ -279,7 +279,7 @@ const createInvoice = () => {
     <div className="container">
       <div className="h-full">
         {/* Invoice form section */}
-        <div className="flex flex-col lg:mt-[9rem] h-full p-8">
+        <div className="flex flex-col h-full p-8">
           <p
             ref={errRef}
             className={errMsg ? "errmsg" : "offscreen"}

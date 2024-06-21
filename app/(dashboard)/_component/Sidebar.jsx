@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { RxHamburgerMenu } from "react-icons/rx";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,7 +21,7 @@ const Sidebar = () => {
     };
 
     window.addEventListener("resize", handleResize);
-    handleResize(); // Call the function initially to set the initial state
+    handleResize();
 
     return () => {
       window.removeEventListener("resize", handleResize);
@@ -31,10 +30,8 @@ const Sidebar = () => {
 
   return (
     <div>
-      {/* Hamburger icon */}
-      {/* <RxHamburgerMenu /> */}
       <div
-        className="lg:hidden fixed top-3 left-2 z-50 cursor-pointer"
+        className="lg:hidden fixed top-3 left-2 z-50"
         onClick={toggleSidebar}
       >
         <svg
@@ -51,9 +48,8 @@ const Sidebar = () => {
       </div>
 
       <div
-        className={`lg:flex lg:flex-col bg-[#333333] text-white w-64 fixed top-0 left-0 h-full overflow-y-auto ease-in-out transition-all duration-300 z-40 ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`lg:flex lg:flex-col bg-[#333333] text-white w-[18%] fixed top-0 left-0 h-full overflow-y-auto ease-in-out transition-all duration-300 z-40 ${isOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
       >
         {/* Blur background when sidebar is open */}
         {isOpen && isMobile && (

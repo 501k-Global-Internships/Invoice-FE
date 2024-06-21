@@ -7,8 +7,8 @@ import axios from "../../api/axios";
 
 const Invoices = () => {
   const [invoices, setInvoices] = useState([]);
-  const [showPopup, setShowPopup] = useState(null);
-  const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
+  const [currentPopupInvoiceId, setCurrentPopupInvoiceId] = useState(null);
+  // const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
   const [selectedClients, setSelectedClients] = useState([]);
   const [selectedInvoiceId, setSelectedInvoiceId] = useState("");
 
@@ -630,18 +630,9 @@ const Invoices = () => {
     { status: "Draft", amount: draftInvoicesCount, icon: <DraftIcon /> },
   ];
 
-  const togglePopup = (e, index) => {
-    if (showPopup === index) {
-      setShowPopup(null);
-      setPopupPosition({ x: 0, y: 0 });
-    } else {
-      const rect = e.currentTarget.getBoundingClientRect();
-      setShowPopup(index);
-      setPopupPosition({
-        x: rect.left + window.scrollX,
-        y: rect.top + window.scrollY,
-      });
-    }
+  const togglePopup = (e, invoiceId) => {
+    e.preventDefault();
+    setCurrentPopupInvoiceId((prevId) => (prevId === invoiceId ? null : invoiceId));
   };
 
   const totalPages = Math.ceil(invoices.length / itemsPerPage);
@@ -884,9 +875,9 @@ const Invoices = () => {
           </div>
           {/* Client table section */}
           <div className="overflow-x-auto shadow-md rounded-md">
-            <div className="rounded-lg max-w-full overflow-x-auto">
+            <div className="rounded-lg max-w-full overflow-x-auto h-[15rem]">
               <table className="w-full border-collapse">
-                <thead className="bg-black rounded-t-lg ">
+                <thead className="bg-black rounded-t-lg sticky top-0 z-50">
                   <tr className="text-sm text-white">
                     <th className="py-2 px-4 flex items-center">
                       <input
@@ -909,7 +900,7 @@ const Invoices = () => {
                   <tbody className="bg-white divide-y divide-gray-200">
                     {invoices.map((invoice, index) => (
                       <tr
-                        key={invoice.id}
+                        key={index}
                         className="border-b last:border-none"
                       >
                         <td className="py-2 px-4 ml-9">
@@ -963,10 +954,10 @@ const Invoices = () => {
                             .toString()
                             .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                         </td>
-                        <td className="py-2 px-4 relative ">
+                        <td className="py-2 px-4 relative">
                           <button
                             className="hover:bg-gray-400 text-gray-800 py-1 px-2 rounded"
-                            onClick={(e) => togglePopup(e, index)}
+                            onClick={(e) => togglePopup(e, invoice.id)}
                           >
                             <svg
                               width="4"
@@ -985,15 +976,9 @@ const Invoices = () => {
                             </svg>
                           </button>
                           {/* Popup */}
-                          {showPopup === index && (
-                            <>
-                              <div className="fixed inset-0 z-40"></div>
-                              <div
-                                className="fixed top-0 left-0 z-50 bg-white shadow-lg rounded-lg p-4"
-                                style={{
-                                  transform: `translate(${popupPosition.x}px, ${popupPosition.y}px)`,
-                                }}
-                              >
+                          {currentPopupInvoiceId === invoice.id && (
+                            <div className="absolute right-[1rem] w-[12rem] z-10">
+                              <div className="block bg-white shadow rounded-lg p-4 mt-3rem">
                                 <button
                                   onClick={() => changeStatusToPaid(invoice.id)}
                                   className="flex w-full gap-1 items-center text-[#8DED85] px-2 py-1 hover:bg-gray-100 rounded"
@@ -1098,7 +1083,7 @@ const Invoices = () => {
                                   Download
                                 </button>
                               </div>
-                            </>
+                            </div>
                           )}
                         </td>
                       </tr>
