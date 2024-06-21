@@ -77,7 +77,7 @@ const InvoiceDetails = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 lg:ml-[6.5rem]">
+    <div className="container mx-auto px-4 py-8 lg:ml-[6.5rem] h-full">
       <div className="flex">
         <h1 className="text-xl"><span className="text-gray-300">Invoice </span>/ Create new invoice</h1>
         <div className="flex space-x-8 md:justify-between lg:ml-[33rem]">
