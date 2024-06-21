@@ -673,7 +673,7 @@ const Invoices = () => {
       {loading ? (
         <LoadingSpinner loading={loading} />
       ) : (
-        <div className=" bg-white p-8 h-full">
+        <div className=" bg-white p-8 h-full pl-[2.8rem]">
           <div className="flex flex-col md:flex-row justify-between items-center mb-8 w-full">
             <div className="flex items-center mb-4 md:mb-0 w-full md:w-auto">
               <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center mr-2">
