@@ -43,10 +43,9 @@ const LoginForm = () => {
       router.push("/allInvoices");
     } catch (err) {
       if (!err?.response) {
-        console.log(err);
         setErrMsg("Server Not Responding!");
       } else if (err.response?.status === 400) {
-        setErrMsg("Oops! Something went wrong. Invalid Email or Password.");
+        setErrMsg("Incorrect password.");
       } else if (err.response?.status === 401) {
         setErrMsg("Unauthorized! Invalid Email or Password.");
       } else if (err.response?.status === 404) {
@@ -63,7 +62,7 @@ const LoginForm = () => {
       const result = await signInWithPopup(auth, provider);
       const name = result?.user.displayName
       const email = result?.user.email
-      const response = await axios.post('auth_sign_in',
+      const response = await axios.post('auth-sign-in',
         JSON.stringify({ name, email }),
         {
           headers: {
@@ -92,11 +91,9 @@ const LoginForm = () => {
       <h2 className="font-medium mb-7 text-center">where you left off</h2>
       <p
         ref={errRef}
-        className={errMsg ? "errmsg" : "offscreen"}
+        className={errMsg.length ? "text-center font-bold text-red-600 p-2 mb-2" : "absolute left-[-9999px]"}
         aria-live="assertive"
-      >
-        {errMsg}
-      </p>
+      >{errMsg}</p>
       <div className="w-full max-w-md bg-[#565656] rounded-t-lg shadow-md px-6 py-8 sm:px-8 sm:py-10">
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -128,7 +125,9 @@ const LoginForm = () => {
           </div>
           <div className=" mb-4 text-end">
             <Link
-              href="/resetPassword"
+              href="/resetPasswordEmail"
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-[#FAFAFA] hover:text-gray-300"
             >
               Forgot your password?
@@ -184,7 +183,7 @@ const LoginForm = () => {
           className="flex items-center justify-center gap-3 text-[#FFE86B]"
           onClick={signInWithGoogle}
         >
-          Sign up with Google
+          Login with Google
           <svg
             width="14"
             height="8"

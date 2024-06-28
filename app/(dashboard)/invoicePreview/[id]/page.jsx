@@ -2,6 +2,8 @@
 import React, { useRef, useState, useEffect } from "react";
 import Dropzone from "react-dropzone";
 import Link from "next/link";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "../../../../config/firebaseConfig";
 import { useRouter } from "next/navigation";
 import LoadingSpinner from "../../../loadingSpinner";
 import axios from "../../../api/axios";
@@ -110,7 +112,6 @@ const InvoicePreview = () => {
           withCredentials: true,
         });
 
-        console.log(response.data);
         const issueDate = new Date(response.data.issueDate);
         const dueDate = new Date(response.data.dueDate);
         const formattedIssueDate = issueDate.toISOString().split("T")[0];
