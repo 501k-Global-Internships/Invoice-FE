@@ -2,10 +2,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import Dropzone from "react-dropzone";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { storage } from "@/../config/firebaseConfig";
+import { storage } from "../../../config/firebaseConfig";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import axios from "@/../../app/api/axios";
+import axios from "../../api/axios";
 
 const createInvoice = () => {
   const [imageFile, setImageFile] = useState(null);
@@ -179,7 +179,6 @@ const createInvoice = () => {
         },
         withCredentials: true,
       });
-      console.log(JSON.stringify(response?.data));
       router.push("/allInvoices");
     } catch (err) {
       if (!err?.response) {
@@ -259,7 +258,6 @@ const createInvoice = () => {
         },
         withCredentials: true,
       });
-      console.log(JSON.stringify(response?.data));
       router.push("/allInvoices");
     } catch (err) {
       if (!err?.response) {
@@ -475,7 +473,7 @@ const createInvoice = () => {
                   if (errors.billingAddress)
                     setErrors((prev) => ({ ...prev, billingAddress: false }));
                 }}
-                className={`border rounded p-2 h-24 w-[90%] sm:w-[80%] md:w-[70%] lg:w-[64rem] ml-5 md:ml-8 focus:outline-none ${
+                className={`border rounded p-2 h-24 ml-5 md:ml-8 focus:outline-none ${
                   errors.billingAddress ? "border-red-500" : ""
                 }`}
               />

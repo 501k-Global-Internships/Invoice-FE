@@ -8,7 +8,7 @@ const layout = ({ children }) => {
   const excludedPaths = [
     "sent",
     "sendScreen",
-    "ResetSuccessful",
+    "ResetEmailSuccessful",
     "resetPassword",
     "notify",
     "invoicePreview",

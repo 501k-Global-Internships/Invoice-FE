@@ -3,12 +3,12 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import LoadingSpinner from "../../loadingSpinner";
+import Account from "../../account";
 import axios from "../../api/axios";
 
 const Invoices = () => {
   const [invoices, setInvoices] = useState([]);
   const [currentPopupInvoiceId, setCurrentPopupInvoiceId] = useState(null);
-  // const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
   const [selectedClients, setSelectedClients] = useState([]);
   const [selectedInvoiceId, setSelectedInvoiceId] = useState("");
 
@@ -20,6 +20,7 @@ const Invoices = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(8);
   const [loading, setLoading] = useState(true);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const errRef = useRef();
   const [errMsg, setErrMsg] = useState("");
@@ -186,6 +187,7 @@ const Invoices = () => {
       }
     }
   };
+
   const getSixtyDaysInvoices = async () => {
     try {
       const response = await axios.get("/invoices?dateFilter=last60", {
@@ -675,13 +677,18 @@ const Invoices = () => {
       ) : (
         <div className=" bg-white p-8 h-full pl-[2.8rem]">
           <div className="flex flex-col md:flex-row justify-between items-center mb-8 w-full">
-            <div className="flex items-center mb-4 md:mb-0 w-full md:w-auto">
-              <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center mr-2">
-                {nameAbbr}
+            <div className="block relative">
+              <div className="flex items-center mb-4 md:mb-0 w-full md:w-auto cursor-pointer" onClick={() => setIsModalVisible(!isModalVisible)}>
+                <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center mr-2">
+                  {nameAbbr}
+                </div>
+                <div>
+                  <p className="font-semibold text-xl">{fullName}</p>
+                  <p className="font-small text-xs">{email}</p>
+                </div>
               </div>
-              <div>
-                <p className="font-semibold text-xl">{fullName}</p>
-                <p className="font-small text-xs">{email}</p>
+              <div className="absolute mt-2">
+                {isModalVisible && <Account />}
               </div>
             </div>
             <div className="flex items-center space-x-4 w-full md:w-auto">

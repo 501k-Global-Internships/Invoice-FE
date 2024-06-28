@@ -1,26 +1,22 @@
 "use client";
+import React, { useRef, useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import React, { useRef, useState, useEffect } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import axios from "../api/axios";
-import { auth, provider, signInWithPopup } from '../../config/firebaseConfig';
 
-const SignUpForm = () => {
-  const [email, setEmail] = useState();
-  const [name, setName] = useState("");
-  const [password, setPassword] = useState("");
-
+const ChangePassword = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const [passwordConfirmation, setPasswordConfirmation] = useState("");
-
+  const [newPasswordVisible, setNewPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
-  const [errMsg, setErrMsg] = useState([]);
-  const router = useRouter();
 
-  const REGISTER_URL = "/sign-up";
+  const [currentPassword, seCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [errMsg, setErrMsg] = useState([]);
   const errRef = useRef();
+  const router = useRouter();
 
   const [criteria, setCriteria] = useState({
     uppercase: false,
@@ -29,6 +25,27 @@ const SignUpForm = () => {
     specialChar: false,
   });
 
+  const handleTogglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
+
+  const handleToggleNewPasswordVisibility = () => {
+    setNewPasswordVisible(!newPasswordVisible);
+  };
+
+  const handleToggleConfirmPasswordVisibility = () => {
+    setConfirmPasswordVisible(!confirmPasswordVisible);
+  };
+
+  const handleChange = (e) => {
+    const newPassword = e.target.value;
+    setNewPassword(newPassword);
+    validatePassword(newPassword);
+  };
+
+  const handlePaste = (e) => {
+    e.preventDefault();
+  };
 
   const validatePassword = (password) => {
     const uppercase = /[A-Z]/.test(password);
@@ -44,39 +61,33 @@ const SignUpForm = () => {
     });
   };
 
-  const handleChange = (e) => {
-    const newPassword = e.target.value;
-    setPassword(newPassword);
-    validatePassword(newPassword);
-  };
-
-  const handleTogglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible);
-  };
-
-  const handleToggleConfirmPasswordVisibility = () => {
-    setConfirmPasswordVisible(!confirmPasswordVisible);
-  };
-
-  const handlePaste = (e) => {
-    e.preventDefault();
-  };
-
   useEffect(() => {
-    setErrMsg([]);
-  }, [email, name, password, passwordConfirmation]);
+    setErrMsg([{ msg: "" }]);
+  }, [currentPassword, newPassword, confirmPassword]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const payload = { name, email, password, passwordConfirmation };
+    const payload = { currentPassword, newPassword, confirmPassword };
+
     try {
-      const response = await axios.post(REGISTER_URL, JSON.stringify(payload), {
-        headers: { "Content-Type": "application/json" },
-        withCredentials: true,
+      await axios.put('/change-password',
+        JSON.stringify(payload),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + localStorage.getItem('token'),
+          },
+          withCredentials: true
+        }
+      );
+      let keysToRemove = ["token", "kbsEmail", "logoutName"];
+
+      keysToRemove.forEach((k) => {
+        localStorage.removeItem(k)
       });
-      localStorage.setItem("token", response?.data?.token);
-      router.push("/");
+      router.push("/passwordSuccessful");
+
     } catch (err) {
       if (err.response && err.response.data) {
         if (Array.isArray(err.response.data.errors)) {
@@ -89,92 +100,65 @@ const SignUpForm = () => {
       }
       errRef.current.focus();
     }
-  };
-
-
-  const signInWithGoogle = async () => {
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const name = result?.user.displayName
-      const email = result?.user.email
-      const response = await axios.post('auth-sign-in',
-        JSON.stringify({ name, email }),
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          withCredentials: true
-        }
-      );
-      localStorage.setItem("token", response?.data?.token);
-      localStorage.setItem("name", response?.data?.name);
-      localStorage.setItem("kbsEmail", response?.data?.email);
-
-      router.push("/allInvoices");
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 px-4 py-4">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 px-4 py-8">
       <h2 className="text-3xl font-bold text-center">Welcome to</h2>
       <h2 className="text-3xl font-bold mb-2 text-center">Kings MoneyBox</h2>
-      <h2 className="text-xl font-medium mb-7 text-center">
-        Create an account to enjoy our solutions
+      <h2 className="font-medium text-xl text-center mb-4">
+        Change your password
       </h2>
       <div ref={errRef} className="mb-4">
         {Array.isArray(errMsg) ? (
           errMsg.map((error, index) => (
             <p key={index}
               ref={errRef}
-              className={errMsg ? "errmsg" : "offscreen"}
+              className={errMsg.length ? "text-center font-bold text-red-600 p-2 mb-2" : "absolute left-[-9999px]"}
               aria-live="assertive"
             >{error.msg}</p>
           ))
         ) : (
           <p
             ref={errRef}
-            className={errMsg ? "errmsg" : "offscreen"}
+            className={errMsg.length ? "text-center font-bold text-red-600 p-2 mb-2" : "absolute left-[-9999px]"}
             aria-live="assertive"
           >{errMsg.msg}</p>
         )}
       </div>
-      <div className="w-full max-w-md bg-[#565656] rounded-t-2xl shadow-md px-11 py-8">
+      <div className="w-full max-w-md bg-[#565656] rounded-lg shadow-md px-11 py-7">
         <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <input
-              type="text"
-              id="name"
-              onChange={(e) => setName(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter your full name"
-            />
-          </div>
-          <div className="mb-4">
-            <input
-              type="email"
-              id="email"
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter email address"
-            />
-          </div>
-
           <div className="mb-4 relative">
             <input
               type={passwordVisible ? "text" : "password"}
               id="password"
-              onChange={handleChange}
-              value={password}
+              onChange={(e) => seCurrentPassword(e.target.value)}
+              value={currentPassword}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
-              placeholder="Enter your password"
+              placeholder="Enter your old password"
             />
             <div className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
               <FontAwesomeIcon
                 icon={passwordVisible ? faEye : faEyeSlash}
                 className="text-gray-500"
                 onClick={handleTogglePasswordVisibility}
+              />
+            </div>
+          </div>
+          <div className="mb-4 relative">
+            <input
+              type={newPasswordVisible ? "text" : "password"}
+              id="new-password"
+              onChange={handleChange}
+              value={newPassword}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
+              placeholder="Enter your new password"
+            />
+            <div className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
+              <FontAwesomeIcon
+                icon={newPasswordVisible ? faEye : faEyeSlash}
+                className="text-gray-500"
+                onClick={handleToggleNewPasswordVisibility}
               />
             </div>
           </div>
@@ -211,7 +195,8 @@ const SignUpForm = () => {
             <input
               type={confirmPasswordVisible ? "text" : "password"}
               id="confirmPassword"
-              onChange={(e) => setPasswordConfirmation(e.target.value)}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              value={confirmPassword}
               onPaste={handlePaste}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
               placeholder="Confirm password"
@@ -226,9 +211,9 @@ const SignUpForm = () => {
           </div>
           <button
             type="submit"
-            className="flex items-center justify-center gap-2 w-full py-2 px-4 bg-[#FFD700] font-medium rounded-md hover:bg-[#e4c93e] transition-colors duration-300 mb-4 cursor-pointer"
+            className="flex items-center justify-center gap-2 w-full py-2 px-4 bg-[#FFD700] font-medium rounded-md hover:bg-[#e4c93e] transition-colors duration-300 mb-4"
           >
-            Create Account
+            Change password
             <svg
               width="14"
               height="8"
@@ -245,39 +230,10 @@ const SignUpForm = () => {
               />
             </svg>
           </button>
-
-          <p className="text-gray-300 text-center">
-            Already have an account?
-            <Link href="/" className=" hover:text-gray-400">
-              <span> Login</span>
-            </Link>
-          </p>
         </form>
-      </div>
-      <div className="flex bg-[#333333] w-full max-w-md items-center justify-center rounded-b-2xl shadow-md px-6 py-7">
-        <button
-          type="button"
-          className="flex items-center justify-center gap-3 text-[#FFE86B]"
-          onClick={signInWithGoogle}>
-          Sign up with Google
-          <svg
-            width="14"
-            height="8"
-            viewBox="0 0 14 8"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M10.3333 1.3335L13 4.00016M13 4.00016L10.3333 6.66683M13 4.00016L1 4.00016"
-              stroke="#FFE86B"
-              stroke-width="1.33333"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </button>
       </div>
     </div>
   );
 };
 
-export default SignUpForm;
+export default ChangePassword;
