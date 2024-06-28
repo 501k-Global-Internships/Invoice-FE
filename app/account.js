@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from "next/link";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import './Account.css';
+import './account.css';
 import { faArrowRightToBracket, faKey } from '@fortawesome/free-solid-svg-icons';
 
 const Account = () => {
