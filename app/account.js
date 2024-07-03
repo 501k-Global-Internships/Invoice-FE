@@ -1,10 +1,32 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from "next/link";
+import axios from './api/axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import './account.css';
 import { faArrowRightToBracket, faKey } from '@fortawesome/free-solid-svg-icons';
+import './account.css';
 
 const Account = () => {
+  const [isPasswordSet, setIsPasswordSet] = useState(false);
+
+  useEffect(() => {
+    const checkPasswordSet = async () => {
+      try {
+        const response = await axios.get('/check-password-set', {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        const data = await response.data;
+        setIsPasswordSet(data.isPasswordSet);
+      } catch (error) {
+        console.error('Error checking password set:', error);
+      }
+    };
+
+    checkPasswordSet();
+  }, []);
+
   const logout = () => {
     let keysToRemove = ["token", "kbsEmail", "logoutName"];
 
@@ -21,18 +43,21 @@ const Account = () => {
         <div className="cnt">
           <article className="card">
             <ul className="list">
-              <li>
-                <Link href="/changePassword">
-                  <FontAwesomeIcon className="icon" icon={faKey} />Change Password
-                </Link>
-              </li>
-              {/* <li>
-                <Link href="/profile">
-                  <FontAwesomeIcon className="icon" icon={faUserCircle} />View Profile
-                </Link>
-              </li> */}
+              {isPasswordSet ? (
+                <li>
+                  <Link href="/changePassword">
+                    <FontAwesomeIcon className="icon" icon={faKey} />Change Password
+                  </Link>
+                </li>
+              ) : (
+                <li>
+                  <Link href="/resetPasswordEmail">
+                    <FontAwesomeIcon className="icon" icon={faKey} />Set Password
+                  </Link>
+                </li>
+              )}
               <div className="divider"></div>
-              <li >
+              <li>
                 <Link href="" onClick={logout}>
                   <FontAwesomeIcon className="icon" icon={faArrowRightToBracket} />Logout
                 </Link>
@@ -45,4 +70,4 @@ const Account = () => {
   )
 }
 
-export default Account
+export default Account;
